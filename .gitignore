@@ -5,6 +5,8 @@ build/
 !**/src/test/**/build/
 **/build/
 
+docs/dev/api/javadoc/
+
 ### IntelliJ IDEA ###
 .idea/
 *.iws
