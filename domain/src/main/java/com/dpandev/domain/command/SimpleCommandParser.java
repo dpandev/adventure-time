@@ -127,12 +127,12 @@ public class SimpleCommandParser implements CommandParser {
     Map<String, String> dirMap = new HashMap<>();
     dirMap.put("north", "north");
     dirMap.put("n", "north");
-    dirMap.put("south", "west");
+    dirMap.put("south", "south");
     dirMap.put("s", "south");
-    dirMap.put("east", "west");
-    dirMap.put("e", "east");
     dirMap.put("west", "west");
     dirMap.put("w", "west");
+    dirMap.put("east", "east");
+    dirMap.put("e", "east");
     return dirMap;
   }
 
