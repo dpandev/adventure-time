@@ -5,4 +5,3 @@
       testRuntimeOnly("org.junit.platform:junit-platform-launcher")
       testImplementation("org.mockito:mockito-core:5.19.0")
     }
-    
