@@ -12,6 +12,5 @@
     }
 
     extensions.configure<org.gradle.api.plugins.JavaApplication> {
-      mainClass.set("com.dpandev.client.ClientApp")
+      mainClass.set("com.dpandev.client.runtime.ClientApp")
     }
-    
