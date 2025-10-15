@@ -69,7 +69,7 @@ public class SimpleCommandParser implements CommandParser {
         target = tokens.get(1);
       }
       // additional args beyond the target, if any; else empty list
-      args = (tokens.size() > 2) ? tokens.subList(2, tokens.size()) : List.of();
+      args = (tokens.size() > 1) ? tokens.subList(1, tokens.size()) : List.of();
     }
     return new CommandToken(verb, target, List.copyOf(args), raw);
   }
