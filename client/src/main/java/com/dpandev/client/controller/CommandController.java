@@ -1,6 +1,6 @@
 package com.dpandev.client.controller;
 
-import com.dpandev.domain.utils.CommandResult;
+import com.dpandev.domain.service.CommandResult;
 import com.dpandev.domain.utils.CommandToken;
 import com.dpandev.domain.utils.GameContext;
 import com.dpandev.domain.utils.Verb;

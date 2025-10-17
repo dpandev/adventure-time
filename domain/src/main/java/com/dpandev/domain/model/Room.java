@@ -8,7 +8,7 @@ public final class Room {
   private final String id;
   private final String name;
   private final String description;
-  private final Map<String, Integer> exits;
+  private final Map<String, String> exits;
   private final List<String> itemIds;
   private String puzzleId;
 
@@ -23,11 +23,7 @@ public final class Room {
    * @param itemIds A list of item IDs present in the room.
    */
   public Room(
-      String id,
-      String name,
-      String description,
-      Map<String, Integer> exits,
-      List<String> itemIds) {
+      String id, String name, String description, Map<String, String> exits, List<String> itemIds) {
     this.id = id;
     this.name = name;
     this.description = description;
@@ -47,11 +43,15 @@ public final class Room {
     return description;
   }
 
-  public Map<String, Integer> getExits() {
+  public Map<String, String> getExits() {
     return exits;
   }
 
   public String getPuzzleId() {
     return puzzleId;
+  }
+
+  public List<String> getItemIds() {
+    return itemIds;
   }
 }

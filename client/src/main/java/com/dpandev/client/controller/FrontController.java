@@ -1,6 +1,6 @@
 package com.dpandev.client.controller;
 
-import com.dpandev.domain.utils.CommandResult;
+import com.dpandev.domain.service.CommandResult;
 import com.dpandev.domain.utils.CommandToken;
 import com.dpandev.domain.utils.GameContext;
 import com.dpandev.domain.utils.Verb;
@@ -16,6 +16,7 @@ public final class FrontController {
       Map<VerbCategory, CommandController> controllersByCategory,
       CommandController systemController) {
     // make defensive copy of map for immutability
+    // uses EnumMap for efficiency with enum keys - VerbCategory is the enum key type
     this.controllersByCategory = new EnumMap<>(VerbCategory.class);
     this.controllersByCategory.putAll(controllersByCategory);
     this.systemController = systemController;

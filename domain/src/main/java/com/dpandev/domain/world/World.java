@@ -84,6 +84,16 @@ public final class World {
   }
 
   /**
+   * Retrieves a room by its ID.
+   *
+   * @param roomId The ID of the room to retrieve.
+   * @return An Optional containing the Room if found, or empty if not found.
+   */
+  public Optional<Room> getRoomById(String roomId) {
+    return Optional.ofNullable(roomsById.get(roomId));
+  }
+
+  /**
    * Finds a puzzle by its ID.
    *
    * @param puzzleId The ID of the puzzle to find.

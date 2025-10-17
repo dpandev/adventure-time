@@ -15,7 +15,6 @@ public enum VerbCategory {
    */
   public static VerbCategory of(Verb v) {
     if (v == null) {
-      ;
       return SYSTEM;
     }
     return switch (v) {
