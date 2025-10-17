@@ -1,5 +1,6 @@
-package com.dpandev.domain.command;
+package com.dpandev.domain.utils;
 
+/** Enumeration of possible command verbs in the text adventure game. */
 public enum Verb {
   GO,
   LOOK,

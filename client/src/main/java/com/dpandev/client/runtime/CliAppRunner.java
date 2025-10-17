@@ -14,6 +14,7 @@ public class CliAppRunner {
 
   public void run() {
     view.println("Adventure Time — CLI");
+
     try {
       while (true) {
         view.printf("> ");
