@@ -59,7 +59,7 @@ public final class DefaultExplorationService implements ExplorationService {
     // validate current room
     Optional<Room> currentRoomOpt = world.getRoomById(player.getRoomId());
     if (currentRoomOpt.isEmpty()) {
-      return CommandResult.fail("Your current location is unknown. Cannot move.");
+      return CommandResult.fail("Your current location is unknown."); // this should not happen
     }
 
     Room currentRoom = currentRoomOpt.get();

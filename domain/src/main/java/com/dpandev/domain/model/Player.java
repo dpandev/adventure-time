@@ -108,7 +108,7 @@ public final class Player {
    *
    * @return A list of item IDs.
    */
-  public List<String> getInventoryItems() {
+  public List<String> getInventoryItemIds() {
     return inventoryItems;
   }
 
