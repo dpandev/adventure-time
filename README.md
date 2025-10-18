@@ -27,14 +27,16 @@ TODO
 
 ## AI Disclaimer:
 
-AI was utilized in the development of this application. AI was primarily used as a tool for determining the initial project structure/implementation plan (given the desired stack to use - java 21, gradle, spring, etc.), debugging, optimization, and aiding with documentation. The purpose of using AI in this project is to aid learning and development efforts - reducing the amount of time normally spent googling and searching/filtering for information on Google, StackOverflow, etc. A list of prompts used for this project can be provided upon request.
+AI was utilized in the development of this application. AI was primarily used as a tool for determining the initial repo structure/setup plan (given the desired stack to use - java 21, gradle, spring, etc.), debugging, optimization, and aiding with documentation. The purpose of using AI in this project is to aid learning and development efforts - reducing the amount of time normally spent googling and searching/filtering for information on Google, StackOverflow, etc. A more detailed list of prompts used for this project (non-conclusive) can be provided upon request.
 
 The following is a list of the tasks completed by (or completed with the help of) AI tools:
-- Determining the optimal project repo structure for maximum compatability between frameworks, tools, and other requirements — as well as following conventional Java development standards.
+- Determining the optimal project repo structure for maximum versions compatability between frameworks, tools, and other requirements — as well as following conventional Java development standards. Requirements included: Java 21 (Temurin LTS), Gradle, Spring Boot, H2 (dev), Postgres (prod), and JUnit 5.
 - Configuring Gradle project structure and debugging build errors related to setup.
 - Generated a "less strict" checkstyle (in comparison to the [Google Java Style](https://checkstyle.sourceforge.io/google_style.html)). Found in config/checkstyle/...
 - Generating documentation (docs are manually reviewed for accuracy)
-- Auto-completing code snippets, methods, and javadoc comments (manually reviewed for accuracy; formatted automatically with spotless)
+- Auto-completing (tab) code snippets, methods, and javadoc comments (manually reviewed for accuracy; formatted automatically with spotless)
 - Debugging code errors and exceptions
+- Asking for "correct" or "best practice" alternatives to code snippets or approaches (class immutability, encapsulation, handling exceptions, etc.)
+-
 
 ---

@@ -22,7 +22,7 @@ public final class FrontController {
     this.systemController = systemController;
   }
 
-  CommandResult handle(CommandToken cmd, GameContext ctx) {
+  public CommandResult handle(CommandToken cmd, GameContext ctx) {
     final Verb verb = (cmd == null) ? Verb.UNKNOWN : cmd.verb();
     // route to appropriate controller based on verb category
     VerbCategory vc = VerbCategory.of(verb);

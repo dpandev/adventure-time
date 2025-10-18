@@ -7,6 +7,9 @@ build/
 
 docs/dev/api/javadoc/
 
+/saves/
+/saves/*.properties
+
 ### IntelliJ IDEA ###
 .idea/
 *.iws

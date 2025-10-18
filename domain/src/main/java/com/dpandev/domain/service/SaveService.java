@@ -51,4 +51,34 @@ public final class SaveService {
   public Optional<SaveData> load(UUID playerId) {
     return repo.findByPlayerId(playerId);
   }
+
+  /**
+   * Apply the loaded save data to the current game context.
+   *
+   * @param ctx the current game context
+   * @param data the loaded save data
+   * @return CommandResult indicating success or failure of applying the save data
+   */
+  public CommandResult applySave(GameContext ctx, SaveData data) {
+    var player = ctx.player();
+    var world = ctx.world();
+
+    // check that save data version matches current world version
+    if (!data.worldVersion().equals(world.getVersion())) {
+      return CommandResult.fail(
+          "Save is for world version "
+              + data.worldVersion()
+              + ", but current world is version "
+              + world.getVersion());
+    }
+
+    // apply save data to player but keep the current player uuid
+    player.setName(data.playerName());
+    player.setRoomId(data.roomId());
+    player.getInventoryItemIds().clear();
+    player.getInventoryItemIds().addAll(data.itemIds());
+
+    return CommandResult.success(
+        "Game loaded successfully. You are now in room " + data.roomId() + ".");
+  }
 }
