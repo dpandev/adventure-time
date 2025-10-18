@@ -36,7 +36,17 @@ public final class JsonWorldLoader implements WorldLoader {
 
   @Override
   public World load() {
-    JsonNode root = read(path);
+    // Try to open the requested path, fall back to example.json if not found
+    String pathToLoad = path;
+    try (InputStream testStream = open(path)) {
+      if (testStream == null) {
+        pathToLoad = "worldpacks/example.json";
+      }
+    } catch (IOException e) {
+      pathToLoad = "worldpacks/example.json";
+    }
+
+    JsonNode root = read(pathToLoad);
 
     // Required top-level fields (as per your model)
     String version = reqText(root, "version");

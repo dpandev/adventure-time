@@ -50,7 +50,7 @@ public final class CliAppRunner {
       }
 
       if (cmd.verb() == Verb.QUIT) {
-        saveAndExit("Goodbye!");
+        saveAndExit("Game saved.");
         return;
       }
     }

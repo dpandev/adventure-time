@@ -14,3 +14,14 @@
     extensions.configure<org.gradle.api.plugins.JavaApplication> {
       mainClass.set("com.dpandev.client.runtime.ClientApp")
     }
+
+    // Configure JVM arguments for the run task to ensure memory use does not exceed 512MB
+    tasks.named<JavaExec>("run") {
+      jvmArgs = listOf(
+        "-Xms128m", "-Xmx256m",
+        "-XX:+UseG1GC",
+        "-Xlog:gc*,safepoint",
+        "-XX:+HeapDumpOnOutOfMemoryError",
+        "-XX:HeapDumpPath=${project.layout.buildDirectory.get().asFile}/heapdumps"
+      )
+    }

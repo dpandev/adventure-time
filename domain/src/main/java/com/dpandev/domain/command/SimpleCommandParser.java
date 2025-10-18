@@ -113,8 +113,6 @@ public class SimpleCommandParser implements CommandParser {
     verbMap.put("solve", Verb.SOLVE);
     verbMap.put("answer", Verb.SOLVE);
     verbMap.put("quit", Verb.QUIT);
-    verbMap.put("exit", Verb.QUIT);
-    verbMap.put("q", Verb.QUIT);
     verbMap.put("save", Verb.SAVE);
     verbMap.put("load", Verb.LOAD);
     return verbMap;

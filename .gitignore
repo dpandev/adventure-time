@@ -7,7 +7,7 @@ build/
 
 docs/dev/api/javadoc/
 
-/saves/
+!/saves/
 /saves/*.properties
 
 client/src/main/resources/worldpacks/*
