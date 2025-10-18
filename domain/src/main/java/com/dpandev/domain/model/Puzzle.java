@@ -69,4 +69,8 @@ public class Puzzle {
   public Map<String, Object> getSolution() {
     return solution;
   }
+
+  public void setSolution(Map<String, Object> solution) {
+    this.solution.putAll(solution);
+  }
 }

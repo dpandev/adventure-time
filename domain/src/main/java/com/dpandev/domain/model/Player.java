@@ -15,16 +15,20 @@ public final class Player {
   private String roomId;
   private final List<String> inventoryItems;
   private List<String> puzzlesSolved;
+  private final List<String> roomsVisited;
 
   /**
    * Constructs a new Player with the specified name.
    *
    * @param name The name of the player.
    */
-  public Player(String name) {
+  public Player(String name, String startingRoomId) {
+    this.roomId = startingRoomId;
     this.name = name;
     this.score = 0;
     this.inventoryItems = new ArrayList<String>();
+    this.puzzlesSolved = new ArrayList<String>();
+    this.roomsVisited = new ArrayList<String>();
   }
 
   /**
@@ -104,7 +108,7 @@ public final class Player {
    *
    * @return A list of item IDs.
    */
-  public List<String> getInventoryItems() {
+  public List<String> getInventoryItemIds() {
     return inventoryItems;
   }
 
@@ -152,5 +156,23 @@ public final class Player {
    */
   public void setPuzzlesSolved(List<String> puzzlesSolved) {
     this.puzzlesSolved = puzzlesSolved;
+  }
+
+  /**
+   * Gets the list of rooms visited by the player.
+   *
+   * @return A list of room IDs that the player has visited.
+   */
+  public List<String> getRoomsVisited() {
+    return roomsVisited;
+  }
+
+  /**
+   * Adds a room to the list of rooms visited by the player.
+   *
+   * @param roomId The ID of the room to add.
+   */
+  public void addRoomToRoomsVisited(String roomId) {
+    this.roomsVisited.add(roomId);
   }
 }

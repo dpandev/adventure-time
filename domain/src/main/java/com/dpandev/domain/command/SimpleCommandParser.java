@@ -1,5 +1,7 @@
 package com.dpandev.domain.command;
 
+import com.dpandev.domain.utils.CommandToken;
+import com.dpandev.domain.utils.Verb;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

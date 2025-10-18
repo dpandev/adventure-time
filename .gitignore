@@ -7,6 +7,12 @@ build/
 
 docs/dev/api/javadoc/
 
+/saves/
+/saves/*.properties
+
+client/src/main/resources/worldpacks/*
+!client/src/main/resources/worldpacks/example.json
+
 ### IntelliJ IDEA ###
 .idea/
 *.iws

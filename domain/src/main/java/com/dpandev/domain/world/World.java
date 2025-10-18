@@ -8,10 +8,7 @@ import java.util.Optional;
 
 /** Represents the entire game world, containing rooms, items, and puzzles. */
 public final class World {
-  private final String id;
   private final String version;
-  private final String name;
-  private final String description;
   private final Map<String, Room> roomsById;
   private final Map<String, Item> itemsById;
   private final Map<String, Puzzle> puzzlesById;
@@ -20,10 +17,7 @@ public final class World {
   /**
    * Constructor for World.
    *
-   * @param id The unique identifier for the world.
    * @param version The version of the world.
-   * @param name The name of the world.
-   * @param description A description of the world.
    * @param rooms A map of rooms in the world, where the key is the room ID and the value is the
    *     Room object.
    * @param items A map of items in the world, where the key is the item ID and the value is the
@@ -33,54 +27,71 @@ public final class World {
    * @param startRoomId The ID of the starting room in the world.
    */
   public World(
-      String id,
       String version,
-      String name,
-      String description,
       Map<String, Room> rooms,
       Map<String, Item> items,
       Map<String, Puzzle> puzzles,
       String startRoomId) {
-    this.id = id;
     this.version = version;
-    this.name = name;
-    this.description = description;
     this.roomsById = rooms;
     this.itemsById = items;
     this.puzzlesById = puzzles;
     this.startRoomId = startRoomId;
   }
 
-  public String getId() {
-    return id;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public String getDescription() {
-    return description;
-  }
-
+  /**
+   * Gets the version of the world.
+   *
+   * @return The version of the world.
+   */
   public String getVersion() {
     return version;
   }
 
+  /**
+   * Gets the items in the world.
+   *
+   * @return A map of items in the world.
+   */
   public Map<String, Item> getItems() {
     return itemsById;
   }
 
+  /**
+   * Gets the rooms in the world.
+   *
+   * @return A map of rooms in the world.
+   */
   public Map<String, Room> getRooms() {
     return roomsById;
   }
 
+  /**
+   * Gets the puzzles in the world.
+   *
+   * @return A map of puzzles in the world.
+   */
   public Map<String, Puzzle> getPuzzles() {
     return puzzlesById;
   }
 
+  /**
+   * Gets the ID of the starting room.
+   *
+   * @return The ID of the starting room.
+   */
   public String getStartRoomId() {
     return startRoomId;
+  }
+
+  /**
+   * Retrieves a room by its ID.
+   *
+   * @param roomId The ID of the room to retrieve.
+   * @return An Optional containing the Room if found, or empty if not found.
+   */
+  public Optional<Room> getRoomById(String roomId) {
+    return Optional.ofNullable(roomsById.get(roomId));
   }
 
   /**

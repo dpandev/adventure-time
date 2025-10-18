@@ -1,4 +1,4 @@
-package com.dpandev.domain.command;
+package com.dpandev.domain.utils;
 
 import java.util.List;
 
