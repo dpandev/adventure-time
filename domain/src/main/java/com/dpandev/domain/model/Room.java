@@ -31,6 +31,21 @@ public final class Room {
     this.itemIds = itemIds;
   }
 
+  public Room(
+      String id,
+      String name,
+      String description,
+      Map<String, String> exits,
+      List<String> itemIds,
+      String puzzleId) {
+    this.id = id;
+    this.name = name;
+    this.description = description;
+    this.exits = exits;
+    this.itemIds = itemIds;
+    this.puzzleId = puzzleId;
+  }
+
   public String getId() {
     return id;
   }

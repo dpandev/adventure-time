@@ -1,0 +1,32 @@
+{
+  "type": "world",
+  "id": "main",
+  "name": "Main World",
+  "startRoomId": "entrance",
+  "items": [
+    { "id": "frost_sigil", "name": "Frost Sigil", "type": "QUEST_ITEM" }
+  ],
+  "rooms": [
+    {
+      "id": "entrance",
+      "name": "Frozen Gate",
+      "description": "An icy archway looms ahead.",
+      "exits": { "north": "hall" },
+      "puzzles": [
+        {
+          "id": "riddle_1",
+          "type": "RIDDLE",
+          "prompt": "I speak without a mouth and hear without ears. What am I?",
+          "answer": "echo",
+          "rewardItemId": "frost_sigil"
+        }
+      ]
+    },
+    {
+      "id": "hall",
+      "name": "Crystal Hall",
+      "description": "Shards glitter underfoot.",
+      "exits": { "south": "entrance" }
+    }
+  ]
+}

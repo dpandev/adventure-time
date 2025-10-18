@@ -6,6 +6,11 @@ A multi-player co-op adventure game that features map exploration, puzzles/quest
 
 ---
 
+## UML Diagram
+[UML Diagram Link](https://drive.google.com/file/d/1-DTjbgjPbhBIcD-TMBt5lK5gtYeajm4L/view?usp=drive_link)
+
+---
+
 ## Modules
 - `:domain` — Shared domain models and utilities.
 - `:client` — Console client for single-player MVP.
