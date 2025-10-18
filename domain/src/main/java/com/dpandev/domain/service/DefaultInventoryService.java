@@ -37,12 +37,12 @@ public final class DefaultInventoryService implements InventoryService {
 
   @Override
   public CommandResult pickup(GameContext ctx, String itemId) {
+    if (itemId == null || itemId.isBlank()) {
+      return CommandResult.fail("Pickup what?.");
+    }
     var player = ctx.player();
     var world = ctx.world();
-    // validate itemId
-    if (itemId == null || itemId.isBlank()) {
-      return CommandResult.fail("You must specify an item to pick up.");
-    }
+
     // get item name from world using itemId and then build a string for success message, check that
     // item not null
     Optional<Item> itemName = ctx.world().findItem(itemId);
@@ -89,5 +89,19 @@ public final class DefaultInventoryService implements InventoryService {
             + "has been dropped successfully from the player inventory and placed in "
             + roomOpt.get().getName()
             + ".");
+  }
+
+  @Override
+  public CommandResult use(GameContext ctx, String itemId) {
+    if (itemId == null || itemId.isBlank()) {
+      return CommandResult.fail("Use what?");
+    }
+    var player = ctx.player();
+
+    if (!player.getInventoryItemIds().contains(itemId)) {
+      return CommandResult.fail("You don't have a " + itemId + ".");
+    }
+
+    return CommandResult.success("You use the " + itemId + ". (Nothing special happens.)");
   }
 }

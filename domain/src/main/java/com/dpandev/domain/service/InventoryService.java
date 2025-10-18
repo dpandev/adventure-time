@@ -30,4 +30,13 @@ public interface InventoryService {
    * @return the result of the drop command
    */
   CommandResult drop(GameContext ctx, String itemId);
+
+  /**
+   * Use an item from the player's inventory.
+   *
+   * @param ctx the game context
+   * @param itemId the ID of the item to use
+   * @return the result of the use command
+   */
+  CommandResult use(GameContext ctx, String itemId);
 }
