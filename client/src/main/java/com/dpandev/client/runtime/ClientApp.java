@@ -23,6 +23,7 @@ import com.dpandev.domain.world.WorldLoader;
 import java.nio.file.Path;
 import java.util.Map;
 
+/** Main client application entry point. */
 public final class ClientApp {
   public static void main(String[] args) {
     ConsoleView view = new ConsoleView();

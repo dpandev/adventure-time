@@ -26,7 +26,17 @@ A multi-player co-op adventure game that features map exploration, puzzles/quest
 
 ## Quick Start
 
-TODO
+- Generate the wrapper: `gradle wrapper --gradle-version 8.14.3`
+- Build everything: `./gradlew clean build`
+- Run console client: `./gradlew :client:run`
+- ~~Run server: `./gradlew :server:bootRun`~~ (works, but not yet implemented)
+
+---
+
+## Additional info
+
+- Create/modify worldpacks (items, puzzles, etc.) → [client/src/main/resources/worldpacks/](client/src/main/resources/worldpacks)
+- Player saved games → [/saves/](saves)
 
 ---
 

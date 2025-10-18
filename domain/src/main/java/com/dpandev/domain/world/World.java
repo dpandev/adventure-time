@@ -39,22 +39,47 @@ public final class World {
     this.startRoomId = startRoomId;
   }
 
+  /**
+   * Gets the version of the world.
+   *
+   * @return The version of the world.
+   */
   public String getVersion() {
     return version;
   }
 
+  /**
+   * Gets the items in the world.
+   *
+   * @return A map of items in the world.
+   */
   public Map<String, Item> getItems() {
     return itemsById;
   }
 
+  /**
+   * Gets the rooms in the world.
+   *
+   * @return A map of rooms in the world.
+   */
   public Map<String, Room> getRooms() {
     return roomsById;
   }
 
+  /**
+   * Gets the puzzles in the world.
+   *
+   * @return A map of puzzles in the world.
+   */
   public Map<String, Puzzle> getPuzzles() {
     return puzzlesById;
   }
 
+  /**
+   * Gets the ID of the starting room.
+   *
+   * @return The ID of the starting room.
+   */
   public String getStartRoomId() {
     return startRoomId;
   }

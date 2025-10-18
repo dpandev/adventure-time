@@ -20,7 +20,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-/** Tiny JSON world loader: simple I/O, lenient puzzle enums, minimal helpers. */
+/**
+ * This was mostly generated with CPGT during debugging to fix load issue quickly. TODO refactor
+ * into proper robust loader with validation, error reporting, tests, etc. Tiny JSON world loader:
+ * simple I/O, lenient puzzle enums, minimal helpers.
+ */
 public final class JsonWorldLoader implements WorldLoader {
 
   private final String path;
