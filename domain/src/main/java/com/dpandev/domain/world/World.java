@@ -123,4 +123,16 @@ public final class World {
   public Optional<Item> findItem(String itemId) {
     return Optional.ofNullable(itemsById.get(itemId));
   }
+
+  /**
+   * Finds an item by its name (case-insensitive).
+   *
+   * @param itemName The name of the item to find.
+   * @return An Optional containing the Item if found, or empty if not found.
+   */
+  public Optional<Item> findItemByName(String itemName) {
+    return itemsById.values().stream()
+        .filter(item -> item.getName().equalsIgnoreCase(itemName))
+        .findFirst();
+  }
 }

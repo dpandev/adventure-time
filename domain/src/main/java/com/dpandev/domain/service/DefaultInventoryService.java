@@ -36,31 +36,32 @@ public final class DefaultInventoryService implements InventoryService {
   }
 
   @Override
-  public CommandResult pickup(GameContext ctx, String itemId) {
-    if (itemId == null || itemId.isBlank()) {
-      return CommandResult.fail("Pickup what?.");
+  public CommandResult pickup(GameContext ctx, String itemName) {
+    // TODO handle case in controller/parser where item name is more than one word
+    if (itemName == null || itemName.isBlank()) {
+      return CommandResult.fail("Pickup what?");
     }
     var player = ctx.player();
     var world = ctx.world();
 
-    // get item name from world using itemId and then build a string for success message, check that
-    // item not null
-    Optional<Item> itemName = ctx.world().findItem(itemId);
-    if (itemName.isEmpty()) {
-      return CommandResult.fail(
-          "Item with ID " + itemId + " does not exist."); // this should not happen
+    // user will provide name, so find item by name
+    Optional<Item> itemOpt = world.findItemByName(itemName);
+    if (itemOpt.isEmpty()) {
+      return CommandResult.fail("There is no " + itemName + " here to pick up.");
     }
 
     // add to player inv then remove from Room
-    player.getInventoryItemIds().add(itemId);
+    player.getInventoryItemIds().add(itemOpt.get().getId());
 
-    // validate current room
+    // validate current room before removing item from it.
+    // TODO will need to move this check logic elsewhere later
     Optional<Room> currentRoomOpt = world.getRoomById(player.getRoomId());
     if (currentRoomOpt.isEmpty()) {
       return CommandResult.fail("Your current location is unknown."); // this should not happen
     }
+    // get the current Room object and remove the item from it
     var currentRoom = currentRoomOpt.get();
-    currentRoom.getItemIds().remove(itemId);
+    currentRoom.getItemIds().remove(itemOpt.get().getId());
 
     return CommandResult.success(
         itemName
@@ -68,8 +69,8 @@ public final class DefaultInventoryService implements InventoryService {
   }
 
   @Override
-  public CommandResult drop(GameContext ctx, String itemId) {
-    if (itemId == null || itemId.isBlank()) {
+  public CommandResult drop(GameContext ctx, String itemName) {
+    if (itemName == null || itemName.isBlank()) {
       return CommandResult.fail("Drop what?");
     }
     var world = ctx.world();
@@ -80,23 +81,30 @@ public final class DefaultInventoryService implements InventoryService {
       return CommandResult.fail("Your current location is unknown."); // this should not happen
     }
 
+    // get the item by name to get its ID
+    Optional<Item> itemOpt = world.findItemByName(itemName);
+    String itemId = itemOpt.get().getId();
+
     if (!player.getInventoryItemIds().remove(itemId)) {
-      return CommandResult.fail("You don't have a " + itemId + ".");
+      return CommandResult.fail("You don't have a " + itemName + ".");
     }
     roomOpt.get().getItemIds().add(itemId);
     return CommandResult.success(
-        itemId
+        itemName
             + "has been dropped successfully from the player inventory and placed in "
             + roomOpt.get().getName()
             + ".");
   }
 
   @Override
-  public CommandResult use(GameContext ctx, String itemId) {
-    if (itemId == null || itemId.isBlank()) {
+  public CommandResult use(GameContext ctx, String itemName) {
+    if (itemName == null || itemName.isBlank()) {
       return CommandResult.fail("Use what?");
     }
     var player = ctx.player();
+    var world = ctx.world();
+    Optional<Item> itemOpt = world.findItemByName(itemName);
+    String itemId = itemOpt.get().getId();
 
     if (!player.getInventoryItemIds().contains(itemId)) {
       return CommandResult.fail("You don't have a " + itemId + ".");
