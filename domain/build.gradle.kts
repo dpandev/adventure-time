@@ -4,5 +4,5 @@
       testImplementation("org.junit.jupiter:junit-jupiter:6.0.0")
       testRuntimeOnly("org.junit.platform:junit-platform-launcher")
       testImplementation("org.mockito:mockito-core:5.20.0")
-      implementation("com.fasterxml.jackson.core:jackson-databind:2.17.+")
+      implementation("com.fasterxml.jackson.core:jackson-databind:2.20.+")
     }
