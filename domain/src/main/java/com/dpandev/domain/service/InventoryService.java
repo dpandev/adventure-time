@@ -39,4 +39,13 @@ public interface InventoryService {
    * @return the result of the use command
    */
   CommandResult use(GameContext ctx, String itemName);
+
+  /**
+   * Inspect an item from the player's inventory.
+   *
+   * @param ctx the game context
+   * @param itemName the Name of the item to inspect
+   * @return the result of the inspect command
+   */
+  CommandResult inspect(GameContext ctx, String itemName);
 }

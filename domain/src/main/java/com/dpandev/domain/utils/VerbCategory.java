@@ -19,8 +19,8 @@ public enum VerbCategory {
     }
     return switch (v) {
       case GO, LOOK -> MOVEMENT;
-      case INSPECT, SOLVE -> INTERACTION;
-      case PICKUP, DROP, USE, INVENTORY -> INVENTORY;
+      case SOLVE -> INTERACTION;
+      case INSPECT, PICKUP, DROP, USE, INVENTORY -> INVENTORY;
       case HELP, SAVE, LOAD, QUIT, UNKNOWN -> SYSTEM;
     };
   }

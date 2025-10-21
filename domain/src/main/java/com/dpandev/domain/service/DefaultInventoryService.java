@@ -36,18 +36,17 @@ public final class DefaultInventoryService implements InventoryService {
   }
 
   @Override
-  public CommandResult pickup(GameContext ctx, String itemName) {
-    // TODO handle case in controller/parser where item name is more than one word
-    if (itemName == null || itemName.isBlank()) {
+  public CommandResult pickup(GameContext ctx, String itemId) {
+    if (itemId == null || itemId.isBlank()) {
       return CommandResult.fail("Pickup what?");
     }
     var player = ctx.player();
     var world = ctx.world();
 
     // user will provide name, so find item by name
-    Optional<Item> itemOpt = world.findItemByName(itemName);
+    Optional<Item> itemOpt = world.findItem(itemId);
     if (itemOpt.isEmpty()) {
-      return CommandResult.fail("There is no " + itemName + " here to pick up.");
+      return CommandResult.fail("There is no " + itemId + " here to pick up.");
     }
 
     // add to player inv then remove from Room
@@ -64,13 +63,13 @@ public final class DefaultInventoryService implements InventoryService {
     currentRoom.getItemIds().remove(itemOpt.get().getId());
 
     return CommandResult.success(
-        itemName
+        itemId
             + " has been picked up from the room and successfully added to the player inventory.");
   }
 
   @Override
-  public CommandResult drop(GameContext ctx, String itemName) {
-    if (itemName == null || itemName.isBlank()) {
+  public CommandResult drop(GameContext ctx, String itemId) {
+    if (itemId == null || itemId.isBlank()) {
       return CommandResult.fail("Drop what?");
     }
     var world = ctx.world();
@@ -81,35 +80,62 @@ public final class DefaultInventoryService implements InventoryService {
       return CommandResult.fail("Your current location is unknown."); // this should not happen
     }
 
-    // get the item by name to get its ID
-    Optional<Item> itemOpt = world.findItemByName(itemName);
-    String itemId = itemOpt.get().getId();
+    Optional<Item> itemOpt = world.findItem(itemId);
+    if (itemOpt.isEmpty()) {
+      return CommandResult.fail("There is no " + itemId + " to drop.");
+    }
 
     if (!player.getInventoryItemIds().remove(itemId)) {
-      return CommandResult.fail("You don't have a " + itemName + ".");
+      return CommandResult.fail("You don't have a " + itemId + ".");
     }
     roomOpt.get().getItemIds().add(itemId);
     return CommandResult.success(
-        itemName
-            + "has been dropped successfully from the player inventory and placed in "
+        itemId
+            + " has been dropped successfully from the player inventory and placed in "
             + roomOpt.get().getName()
             + ".");
   }
 
   @Override
-  public CommandResult use(GameContext ctx, String itemName) {
-    if (itemName == null || itemName.isBlank()) {
+  public CommandResult use(GameContext ctx, String itemId) {
+    if (itemId == null || itemId.isBlank()) {
       return CommandResult.fail("Use what?");
     }
     var player = ctx.player();
     var world = ctx.world();
-    Optional<Item> itemOpt = world.findItemByName(itemName);
-    String itemId = itemOpt.get().getId();
+    Optional<Item> itemOpt =
+        player.getInventoryItemIds().stream()
+            .filter(id -> id.equals(itemId))
+            .findFirst()
+            .flatMap(world::findItem);
+    if (itemOpt.isEmpty()) {
+      return CommandResult.fail("There is no " + itemId + " to use.");
+    }
 
     if (!player.getInventoryItemIds().contains(itemId)) {
       return CommandResult.fail("You don't have a " + itemId + ".");
     }
 
     return CommandResult.success("You use the " + itemId + ". (Nothing special happens.)");
+  }
+
+  @Override
+  public CommandResult inspect(GameContext ctx, String itemId) {
+    if (itemId == null || itemId.isBlank()) {
+      return CommandResult.fail("Inspect what?");
+    }
+
+    var player = ctx.player();
+    var world = ctx.world();
+    Optional<Item> itemOpt = world.findItem(itemId);
+    if (itemOpt.isEmpty()) {
+      return CommandResult.fail("There is no " + itemId + " to inspect.");
+    }
+
+    if (!player.getInventoryItemIds().contains(itemId)) {
+      return CommandResult.fail("You don't have a " + itemId + ".");
+    }
+
+    return CommandResult.success(itemId + ": " + itemOpt.get().getDescription());
   }
 }
