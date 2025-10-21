@@ -38,32 +38,32 @@ public final class DefaultInventoryService implements InventoryService {
   @Override
   public CommandResult pickup(GameContext ctx, String itemId) {
     if (itemId == null || itemId.isBlank()) {
-      return CommandResult.fail("Pickup what?.");
+      return CommandResult.fail("Pickup what?");
     }
     var player = ctx.player();
     var world = ctx.world();
 
-    // get item name from world using itemId and then build a string for success message, check that
-    // item not null
-    Optional<Item> itemName = ctx.world().findItem(itemId);
-    if (itemName.isEmpty()) {
-      return CommandResult.fail(
-          "Item with ID " + itemId + " does not exist."); // this should not happen
+    // user will provide name, so find item by name
+    Optional<Item> itemOpt = world.findItem(itemId);
+    if (itemOpt.isEmpty()) {
+      return CommandResult.fail("There is no " + itemId + " here to pick up.");
     }
 
     // add to player inv then remove from Room
-    player.getInventoryItemIds().add(itemId);
+    player.getInventoryItemIds().add(itemOpt.get().getId());
 
-    // validate current room
+    // validate current room before removing item from it.
+    // TODO will need to move this check logic elsewhere later
     Optional<Room> currentRoomOpt = world.getRoomById(player.getRoomId());
     if (currentRoomOpt.isEmpty()) {
       return CommandResult.fail("Your current location is unknown."); // this should not happen
     }
+    // get the current Room object and remove the item from it
     var currentRoom = currentRoomOpt.get();
-    currentRoom.getItemIds().remove(itemId);
+    currentRoom.getItemIds().remove(itemOpt.get().getId());
 
     return CommandResult.success(
-        itemName
+        itemId
             + " has been picked up from the room and successfully added to the player inventory.");
   }
 
@@ -80,13 +80,18 @@ public final class DefaultInventoryService implements InventoryService {
       return CommandResult.fail("Your current location is unknown."); // this should not happen
     }
 
+    Optional<Item> itemOpt = world.findItem(itemId);
+    if (itemOpt.isEmpty()) {
+      return CommandResult.fail("There is no " + itemId + " to drop.");
+    }
+
     if (!player.getInventoryItemIds().remove(itemId)) {
       return CommandResult.fail("You don't have a " + itemId + ".");
     }
     roomOpt.get().getItemIds().add(itemId);
     return CommandResult.success(
         itemId
-            + "has been dropped successfully from the player inventory and placed in "
+            + " has been dropped successfully from the player inventory and placed in "
             + roomOpt.get().getName()
             + ".");
   }
@@ -97,11 +102,40 @@ public final class DefaultInventoryService implements InventoryService {
       return CommandResult.fail("Use what?");
     }
     var player = ctx.player();
+    var world = ctx.world();
+    Optional<Item> itemOpt =
+        player.getInventoryItemIds().stream()
+            .filter(id -> id.equals(itemId))
+            .findFirst()
+            .flatMap(world::findItem);
+    if (itemOpt.isEmpty()) {
+      return CommandResult.fail("There is no " + itemId + " to use.");
+    }
 
     if (!player.getInventoryItemIds().contains(itemId)) {
       return CommandResult.fail("You don't have a " + itemId + ".");
     }
 
     return CommandResult.success("You use the " + itemId + ". (Nothing special happens.)");
+  }
+
+  @Override
+  public CommandResult inspect(GameContext ctx, String itemId) {
+    if (itemId == null || itemId.isBlank()) {
+      return CommandResult.fail("Inspect what?");
+    }
+
+    var player = ctx.player();
+    var world = ctx.world();
+    Optional<Item> itemOpt = world.findItem(itemId);
+    if (itemOpt.isEmpty()) {
+      return CommandResult.fail("There is no " + itemId + " to inspect.");
+    }
+
+    if (!player.getInventoryItemIds().contains(itemId)) {
+      return CommandResult.fail("You don't have a " + itemId + ".");
+    }
+
+    return CommandResult.success(itemId + ": " + itemOpt.get().getDescription());
   }
 }

@@ -49,9 +49,9 @@ public final class DefaultExplorationService implements ExplorationService {
 
   @Override
   public CommandResult move(GameContext ctx, String direction) {
-    if (direction == null || direction.isBlank()) {
+    if (direction == null || direction.isBlank() || !isValidDirection(direction)) {
       return CommandResult.fail(
-          "You must specify a direction to move. Try a direction like 'north' or 'n'.");
+          "You must specify a valid direction to move. Try a direction like 'north' or 'n'.");
     }
     var world = ctx.world();
     var player = ctx.player();
@@ -78,7 +78,7 @@ public final class DefaultExplorationService implements ExplorationService {
     return CommandResult.success("You move " + direction + ".");
   }
 
-  /* helpers - TODO use? */
+  /* helpers */
   private boolean isValidDirection(String dir) {
     return switch (dir.toLowerCase()) {
       case "north", "n", "south", "s", "east", "e", "west", "w", "up", "u", "down", "d" -> true;

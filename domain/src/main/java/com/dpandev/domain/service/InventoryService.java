@@ -17,10 +17,10 @@ public interface InventoryService {
    * Pick up an item and add it to the player's inventory.
    *
    * @param ctx the game context
-   * @param itemId the ID of the item to pick up
+   * @param itemName the Name of the item to pick up
    * @return the result of the pickup command
    */
-  CommandResult pickup(GameContext ctx, String itemId);
+  CommandResult pickup(GameContext ctx, String itemName);
 
   /**
    * Drop an item from the player's inventory.
@@ -35,8 +35,17 @@ public interface InventoryService {
    * Use an item from the player's inventory.
    *
    * @param ctx the game context
-   * @param itemId the ID of the item to use
+   * @param itemName the ID of the item to use
    * @return the result of the use command
    */
-  CommandResult use(GameContext ctx, String itemId);
+  CommandResult use(GameContext ctx, String itemName);
+
+  /**
+   * Inspect an item from the player's inventory.
+   *
+   * @param ctx the game context
+   * @param itemName the Name of the item to inspect
+   * @return the result of the inspect command
+   */
+  CommandResult inspect(GameContext ctx, String itemName);
 }

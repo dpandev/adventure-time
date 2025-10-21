@@ -29,49 +29,63 @@ public class SimpleCommandParser implements CommandParser {
    * @return the parsed CommandToken
    */
   @Override
-  public CommandToken parse(String line) {
+  public CommandToken parse(final String line) {
     final String raw = (line == null) ? "" : line;
     final String normalized = normalize(raw);
     if (normalized.isEmpty()) {
       return new CommandToken(Verb.UNKNOWN, null, List.of(), raw);
     }
-    List<String> tokens = new ArrayList<>(List.of(normalized.split(" ")));
-    // first token is the verb
-    String head = tokens.getFirst();
 
-    // single-token direction command like "n" or "north"
-    String dir = directionSynonyms.get(head);
-    if (dir != null && tokens.size() == 1) {
-      return new CommandToken(Verb.GO, dir, List.of(), raw);
+    final List<String> tokens = new ArrayList<>(List.of(normalized.split(" ")));
+    final String head = tokens.getFirst();
+
+    // single-token direction like "n" or "north"
+    final String dirSyn = directionSynonyms.get(head);
+    if (dirSyn != null && tokens.size() == 1) {
+      return new CommandToken(Verb.GO, dirSyn, List.of(), raw);
     }
-    // resolve the verb
+
+    // resolve verb; fallback to GO if first token is a direction word
     Verb verb = resolveVerb(head);
-    // fallback to GO if first token is a direction
-    if (verb == Verb.UNKNOWN && dir != null) {
+    if (verb == Verb.UNKNOWN && dirSyn != null) {
       verb = Verb.GO;
     }
-    // remaining tokens are target and args
+
     String target = null;
     List<String> args = List.of();
-    if (tokens.size() > 1 || (verb == Verb.GO && tokens.size() > 0)) {
-      if (verb == Verb.GO) {
-        target = directionSynonyms.getOrDefault(tokens.get(1), tokens.get(1));
-        // if verb is GO and target is null, then controller should prompt user for direction
-      } else if (verb == Verb.INSPECT) {
-        // if verb is INSPECT and no target, check if second token is a number (e.g., "inspect 2
-        // box")
-        int targetIndex = 1;
-        target = tokens.get(targetIndex);
-        args =
-            (tokens.size() > targetIndex + 1)
-                ? tokens.subList(targetIndex + 1, tokens.size())
-                : List.of();
-        // else: no target provided (e.g., "inspect"), controller can prompt
+
+    if (verb == Verb.GO) {
+      // need a second token for the direction; if missing, leave target null
+      if (tokens.size() >= 2) {
+        final String t = tokens.get(1);
+        target = directionSynonyms.getOrDefault(t, t);
+        args = List.copyOf(tokens.subList(1, tokens.size()));
       } else {
-        target = tokens.get(1);
+        // controller should prompt for a direction
+        target = null;
+        args = List.of();
       }
-      // additional args beyond the target, if any; else empty list
-      args = (tokens.size() > 1) ? tokens.subList(1, tokens.size()) : List.of();
+    } else if (verb == Verb.INSPECT
+        || verb == Verb.PICKUP
+        || verb == Verb.DROP
+        || verb == Verb.USE) {
+      if (tokens.size() >= 2) {
+        target = String.join(" ", tokens.subList(1, tokens.size()));
+        args = List.copyOf(tokens.subList(1, tokens.size()));
+      } else {
+        // no target provided
+        target = null;
+        args = List.of();
+      }
+    } else {
+      // other verbs: optional single target token
+      if (tokens.size() >= 2) {
+        target = tokens.get(1);
+        args = (tokens.size() > 2) ? List.copyOf(tokens.subList(2, tokens.size())) : List.of();
+      } else {
+        target = null;
+        args = List.of();
+      }
     }
     return new CommandToken(verb, target, List.copyOf(args), raw);
   }
@@ -113,8 +127,6 @@ public class SimpleCommandParser implements CommandParser {
     verbMap.put("solve", Verb.SOLVE);
     verbMap.put("answer", Verb.SOLVE);
     verbMap.put("quit", Verb.QUIT);
-    verbMap.put("exit", Verb.QUIT);
-    verbMap.put("q", Verb.QUIT);
     verbMap.put("save", Verb.SAVE);
     verbMap.put("load", Verb.LOAD);
     return verbMap;
