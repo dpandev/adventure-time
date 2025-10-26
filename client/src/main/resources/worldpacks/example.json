@@ -26,7 +26,8 @@
           "type": "RIDDLE",
           "prompt": "I speak without a mouth and hear without ears. What am I?",
           "answer": "echo",
-          "rewardItemId": "frost_sigil"
+          "rewardItemId": "frost_sigil",
+          "maxAttempts": 3
         }
       ]
     },

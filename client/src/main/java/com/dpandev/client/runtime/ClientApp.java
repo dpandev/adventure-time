@@ -2,6 +2,7 @@ package com.dpandev.client.runtime;
 
 import com.dpandev.client.controller.CommandController;
 import com.dpandev.client.controller.FrontController;
+import com.dpandev.client.controller.InteractionController;
 import com.dpandev.client.controller.InventoryController;
 import com.dpandev.client.controller.MovementController;
 import com.dpandev.client.controller.SystemController;
@@ -11,8 +12,10 @@ import com.dpandev.domain.command.CommandParser;
 import com.dpandev.domain.command.SimpleCommandParser;
 import com.dpandev.domain.model.Player;
 import com.dpandev.domain.service.DefaultExplorationService;
+import com.dpandev.domain.service.DefaultInteractionService;
 import com.dpandev.domain.service.DefaultInventoryService;
 import com.dpandev.domain.service.ExplorationService;
+import com.dpandev.domain.service.InteractionService;
 import com.dpandev.domain.service.InventoryService;
 import com.dpandev.domain.service.SaveService;
 import com.dpandev.domain.utils.GameContext;
@@ -35,7 +38,8 @@ public final class ClientApp {
     GameContext ctx = new GameContext(world, player);
 
     // init services here
-    ExplorationService explorationService = new DefaultExplorationService();
+    InteractionService interactionService = new DefaultInteractionService();
+    ExplorationService explorationService = new DefaultExplorationService(interactionService);
     InventoryService inventoryService = new DefaultInventoryService();
     var saveDirectory = Path.of("saves");
     SaveService saveService = new SaveService(new FileSaveRepository(saveDirectory));
@@ -43,6 +47,7 @@ public final class ClientApp {
     // init controllers here
     CommandController movementController = new MovementController(explorationService);
     CommandController inventoryController = new InventoryController(inventoryService);
+    CommandController interactionController = new InteractionController(interactionService);
     CommandController systemController = new SystemController(saveService, view);
 
     // init front controller here and pass controllers as map with verb categories as keys
@@ -51,6 +56,7 @@ public final class ClientApp {
             Map.of(
                 VerbCategory.MOVEMENT, movementController,
                 VerbCategory.INVENTORY, inventoryController,
+                VerbCategory.INTERACTION, interactionController,
                 VerbCategory.SYSTEM, systemController),
             systemController // fallback to system controller
             );

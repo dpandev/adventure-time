@@ -7,6 +7,8 @@ public class Puzzle {
   private final String id;
   private final String description;
   private final PuzzleType puzzleType;
+  private final int maxAttempts;
+  private int attemptsLeft;
 
   /** Different phases a puzzle can be in */
   public enum PuzzlePhase {
@@ -33,12 +35,15 @@ public class Puzzle {
       String description,
       PuzzleType puzzleType,
       Map<String, Object> solution,
-      PuzzlePhase puzzlePhase) {
+      PuzzlePhase puzzlePhase,
+      int maxAttempts) {
     this.id = id;
     this.description = description;
     this.puzzleType = puzzleType;
     this.solution = solution;
     this.puzzlePhase = puzzlePhase;
+    this.maxAttempts = maxAttempts;
+    this.attemptsLeft = maxAttempts;
   }
 
   /** Getters and Setters */
@@ -56,6 +61,25 @@ public class Puzzle {
 
   public PuzzlePhase getPuzzlePhase() {
     return puzzlePhase;
+  }
+
+  public int getMaxAttempts() {
+    return maxAttempts;
+  }
+
+  public int getAttemptsLeft() {
+    return attemptsLeft;
+  }
+
+  public int decrementAttemptsLeft() {
+    if (attemptsLeft > 0) {
+      attemptsLeft--;
+    }
+    return attemptsLeft;
+  }
+
+  public void resetAttemptsLeft() {
+    this.attemptsLeft = this.maxAttempts;
   }
 
   public void setPuzzlePhase(PuzzlePhase puzzlePhase) {

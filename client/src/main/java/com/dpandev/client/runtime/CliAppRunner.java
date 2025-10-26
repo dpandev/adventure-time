@@ -8,6 +8,7 @@ import com.dpandev.domain.service.SaveService;
 import com.dpandev.domain.utils.CommandToken;
 import com.dpandev.domain.utils.GameContext;
 import com.dpandev.domain.utils.Verb;
+import java.util.List;
 
 public final class CliAppRunner {
   private final ConsoleView view;
@@ -43,12 +44,25 @@ public final class CliAppRunner {
         return;
       }
 
+      // if awaiting puzzle answer, treat input as puzzle solution and bypass normal command
+      // parsing.
+      // player cannot issue other commands until puzzle is resolved (or max attempts reached).
+      if (ctx.isAwaitingPuzzleAnswer()) {
+        CommandToken solveCmd = new CommandToken(Verb.SOLVE, line, List.of(), line);
+        CommandResult result = frontController.handle(solveCmd, ctx);
+        if (result != null && !result.message().isBlank()) {
+          view.println(result.message());
+        }
+        continue;
+      }
+
       CommandToken cmd = parser.parse(line);
       CommandResult result = frontController.handle(cmd, ctx);
       if (result != null && !result.message().isBlank()) {
         view.println(result.message());
       }
 
+      // TODO remove; this can be handled in the system controller or setup as a shutdown hook
       if (cmd.verb() == Verb.QUIT) {
         saveAndExit("Game saved.");
         return;
