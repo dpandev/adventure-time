@@ -8,6 +8,8 @@ import java.util.Objects;
 public final class GameContext {
   public final World world;
   public final Player player;
+  // Flag indicating if the game is awaiting a puzzle answer from the player
+  private boolean awaitingPuzzleAnswer = false;
 
   /**
    * Constructs a GameContext with the specified world and player.
@@ -37,5 +39,23 @@ public final class GameContext {
    */
   public Player player() {
     return player;
+  }
+
+  /**
+   * Check if the game is awaiting a puzzle answer from the player.
+   *
+   * @return true if awaiting puzzle answer, false otherwise
+   */
+  public boolean isAwaitingPuzzleAnswer() {
+    return awaitingPuzzleAnswer;
+  }
+
+  /**
+   * Set whether the game is awaiting a puzzle answer.
+   *
+   * @param awaiting true if awaiting answer, false otherwise
+   */
+  public void setAwaitingPuzzleAnswer(boolean awaiting) {
+    this.awaitingPuzzleAnswer = awaiting;
   }
 }

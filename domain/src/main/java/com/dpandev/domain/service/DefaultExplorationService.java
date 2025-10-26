@@ -6,6 +6,12 @@ import java.util.Optional;
 
 public final class DefaultExplorationService implements ExplorationService {
 
+  private final InteractionService interactionService;
+
+  public DefaultExplorationService(InteractionService interactionService) {
+    this.interactionService = interactionService;
+  }
+
   @Override
   public CommandResult look(GameContext ctx) {
     var world = ctx.world();
@@ -63,6 +69,10 @@ public final class DefaultExplorationService implements ExplorationService {
     }
 
     Room currentRoom = currentRoomOpt.get();
+
+    // Delegate puzzle reset to InteractionService
+    interactionService.resetPuzzleOnExit(ctx);
+
     // validate exit in that direction
     if (!isValidExit(direction, currentRoom)) {
       return CommandResult.fail("You can't go " + direction + " from here.");
@@ -74,7 +84,21 @@ public final class DefaultExplorationService implements ExplorationService {
       return CommandResult.fail("There is no room in that direction. Try another direction.");
     }
 
+    // move to new room
     player.setRoomId(destRoomId);
+
+    // Check if destination room has a puzzle and delegate to InteractionService
+    Optional<Room> destRoomOpt = world.getRoomById(destRoomId);
+    if (destRoomOpt.isPresent()) {
+      Room destRoom = destRoomOpt.get();
+      if (destRoom.getPuzzleId() != null) {
+        CommandResult puzzleResult = interactionService.presentPuzzle(ctx, destRoom.getPuzzleId());
+        if (puzzleResult != null) {
+          return CommandResult.success("You move " + direction + ".\n\n" + puzzleResult.message());
+        }
+      }
+    }
+
     return CommandResult.success("You move " + direction + ".");
   }
 

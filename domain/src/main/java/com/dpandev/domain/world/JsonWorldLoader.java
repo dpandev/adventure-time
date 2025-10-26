@@ -21,9 +21,9 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * This was mostly generated with CPGT during debugging to fix load issue quickly. TODO refactor
- * into proper robust loader with validation, error reporting, tests, etc. Tiny JSON world loader:
- * simple I/O, lenient puzzle enums, minimal helpers.
+ * This was mostly generated with CGPT and Claude Sonnet 4.5 during debugging to fix load issue
+ * quickly. TODO refactor into proper robust loader with validation, error reporting, tests, etc.
+ * Tiny JSON world loader: simple I/O, lenient puzzle enums, minimal helpers.
  */
 public final class JsonWorldLoader implements WorldLoader {
 
@@ -66,6 +66,8 @@ public final class JsonWorldLoader implements WorldLoader {
 
     // Rooms
     Map<String, Room> roomsById = new HashMap<>();
+    Map<String, Puzzle> puzzlesById = new HashMap<>();
+
     JsonNode rooms = root.path("rooms");
     if (rooms.isArray()) {
       for (JsonNode n : rooms) {
@@ -97,19 +99,63 @@ public final class JsonWorldLoader implements WorldLoader {
           }
         }
 
-        String puzzleId = n.hasNonNull("puzzleId") ? n.get("puzzleId").asText() : null;
+        // Parse inline puzzles array in room
+        String puzzleId = null;
+        JsonNode puzzlesNode = n.path("puzzles");
+        if (puzzlesNode.isArray() && puzzlesNode.size() > 0) {
+          // Take first puzzle in the array (rooms have at most one puzzle)
+          JsonNode puzzleNode = puzzlesNode.get(0);
+          String pId = reqText(puzzleNode, "id");
+          String pDescription = optText(puzzleNode, "description", "");
+          String prompt = optText(puzzleNode, "prompt", pDescription);
+          int maxAttempts = puzzleNode.path("maxAttempts").asInt(3);
+
+          PuzzleType type =
+              parseEnum(
+                  puzzleNode,
+                  new String[] {"type", "puzzleType"},
+                  PuzzleType.RIDDLE,
+                  PuzzleType.class);
+
+          // Build solution map from answer field or solution object
+          Map<String, Object> solution = new HashMap<>();
+          if (puzzleNode.hasNonNull("answer")) {
+            solution.put("answer", puzzleNode.get("answer").asText());
+          } else if (puzzleNode.hasNonNull("solution")) {
+            // convert the solution node to a Map<String, Object> to support complex solutions and
+            // preserve data types
+            solution =
+                mapper.convertValue(
+                    puzzleNode.path("solution"), new TypeReference<Map<String, Object>>() {});
+          }
+
+          // Use prompt as description if provided, otherwise use description
+          String finalDescription = prompt.isEmpty() ? pDescription : prompt;
+
+          puzzlesById.put(
+              pId,
+              new Puzzle(
+                  pId, finalDescription, type, solution, Puzzle.PuzzlePhase.LOCKED, maxAttempts));
+          puzzleId = pId;
+        }
+
+        // Also check for standalone puzzleId field (alternative format)
+        if (puzzleId == null && n.hasNonNull("puzzleId")) {
+          puzzleId = n.get("puzzleId").asText();
+        }
 
         roomsById.put(id, new Room(id, name, description, exits, itemIds, puzzleId));
       }
     }
 
-    // Puzzles (optional)
-    Map<String, Puzzle> puzzlesById = new HashMap<>();
-    JsonNode puzzles = root.path("puzzles");
-    if (puzzles.isArray()) {
-      for (JsonNode n : puzzles) {
+    // Also parse top-level puzzles array if present (for backwards compatibility - old format was
+    // to load all puzzles on top level of JSON, not inline in rooms)
+    JsonNode topLevelPuzzles = root.path("puzzles");
+    if (topLevelPuzzles.isArray()) {
+      for (JsonNode n : topLevelPuzzles) {
         String id = reqText(n, "id");
         String description = optText(n, "description", "");
+        int maxAttempts = n.path("maxAttempts").asInt(3);
 
         // lenient: accept type/puzzleType, ignore case/spaces/dashes, default RIDDLE
         PuzzleType type =
@@ -128,7 +174,7 @@ public final class JsonWorldLoader implements WorldLoader {
                 n.path("solution").isMissingNode() ? Map.<String, Object>of() : n.path("solution"),
                 new TypeReference<Map<String, Object>>() {});
 
-        puzzlesById.put(id, new Puzzle(id, description, type, solution, phase));
+        puzzlesById.put(id, new Puzzle(id, description, type, solution, phase, maxAttempts));
       }
     }
 
