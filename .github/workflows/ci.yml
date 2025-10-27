@@ -60,7 +60,7 @@ jobs:
       # Always publish reports if something failed
       - name: Upload test reports (if failed)
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: test-reports
           path: |
