@@ -2,16 +2,13 @@ package com.dpandev.domain.model;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * Represents a player in the game with attributes such as name, score, current room, inventory
  * items, puzzles solved, and rooms visited.
  */
 public final class Player extends Character {
-  private final UUID id = UUID.randomUUID();
-  private String name;
-  private int score;
+  private int score = 0;
   private String roomId;
   private final List<String> inventoryItems;
   private List<String> puzzlesSolved;
@@ -25,39 +22,11 @@ public final class Player extends Character {
   public Player(String name, String startingRoomId) {
     super(name, 100);
     this.roomId = startingRoomId;
-    this.score = 0;
     this.inventoryItems = new ArrayList<String>();
     this.puzzlesSolved = new ArrayList<String>();
     this.roomsVisited = new ArrayList<String>();
-    this.baseAttack = 10;
-    this.baseDefense = 0;
-  }
-
-  /**
-   * Gets the unique identifier of the player.
-   *
-   * @return The UUID of the player.
-   */
-  public UUID getId() {
-    return id;
-  }
-
-  /**
-   * Gets the player's name.
-   *
-   * @return The name of the player.
-   */
-  public String getName() {
-    return name;
-  }
-
-  /**
-   * Sets the player's name.
-   *
-   * @param name The name to set for the player.
-   */
-  public void setName(String name) {
-    this.name = name;
+    increaseBaseAttack(10);
+    increaseBaseDefense(0);
   }
 
   /**
@@ -127,9 +96,10 @@ public final class Player extends Character {
    * Removes an item from the player's inventory.
    *
    * @param itemId The ID of the item to remove.
+   * @return true if the item was removed, false otherwise.
    */
-  public void removeItemFromInventory(String itemId) {
-    this.inventoryItems.remove(itemId);
+  public boolean removeItemFromInventory(String itemId) {
+    return this.inventoryItems.remove(itemId);
   }
 
   /**

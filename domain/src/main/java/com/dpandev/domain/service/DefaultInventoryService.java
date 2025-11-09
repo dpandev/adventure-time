@@ -50,7 +50,7 @@ public final class DefaultInventoryService implements InventoryService {
     }
 
     // add to player inv then remove from Room
-    player.getInventoryItemIds().add(itemOpt.get().getId());
+    player.addItemToInventory(itemOpt.get().getId());
 
     // validate current room before removing item from it.
     // TODO will need to move this check logic elsewhere later
@@ -85,7 +85,7 @@ public final class DefaultInventoryService implements InventoryService {
       return CommandResult.fail("There is no " + itemId + " to drop.");
     }
 
-    if (!player.getInventoryItemIds().remove(itemId)) {
+    if (!player.removeItemFromInventory(itemId)) {
       return CommandResult.fail("You don't have a " + itemId + ".");
     }
     roomOpt.get().getItemIds().add(itemId);
@@ -112,7 +112,7 @@ public final class DefaultInventoryService implements InventoryService {
       return CommandResult.fail("There is no " + itemId + " to use.");
     }
 
-    if (!player.getInventoryItemIds().contains(itemId)) {
+    if (!player.hasItemInInventory(itemId)) {
       return CommandResult.fail("You don't have a " + itemId + ".");
     }
 
@@ -132,7 +132,7 @@ public final class DefaultInventoryService implements InventoryService {
       return CommandResult.fail("There is no " + itemId + " to inspect.");
     }
 
-    if (!player.getInventoryItemIds().contains(itemId)) {
+    if (!player.hasItemInInventory(itemId)) {
       return CommandResult.fail("You don't have a " + itemId + ".");
     }
 

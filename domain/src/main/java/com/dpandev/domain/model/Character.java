@@ -2,20 +2,25 @@ package com.dpandev.domain.model;
 
 import java.util.UUID;
 
+/** Represents a character in the game with attributes such as name, health, attack, and defense. */
 public abstract class Character {
-  final UUID id = UUID.randomUUID();
-  final String name;
-  final int maxHealth;
-  int currentHealth;
-  int baseAttack;
-  int baseDefense;
+  private final UUID id = UUID.randomUUID();
+  private String name;
+  private final int maxHealth;
+  private int currentHealth;
+  private int baseAttack = 0;
+  private int baseDefense = 0;
 
+  /**
+   * Constructs a Character with the specified name and maximum health.
+   *
+   * @param name the name of the character
+   * @param maxHealth the maximum health of the character
+   */
   public Character(String name, int maxHealth) {
     this.name = name;
     this.maxHealth = maxHealth;
     this.currentHealth = maxHealth;
-    this.baseAttack = 0;
-    this.baseDefense = 0;
   }
 
   public UUID getId() {
@@ -24,6 +29,10 @@ public abstract class Character {
 
   public String getName() {
     return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
   }
 
   public int getMaxHealth() {
