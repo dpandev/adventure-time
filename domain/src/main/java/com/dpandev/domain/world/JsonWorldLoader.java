@@ -144,7 +144,23 @@ public final class JsonWorldLoader implements WorldLoader {
           puzzleId = n.get("puzzleId").asText();
         }
 
-        roomsById.put(id, new Room(id, name, description, exits, itemIds, puzzleId));
+        // Parse monster field
+        String monsterId = null;
+        if (n.hasNonNull("monsterId")) {
+          monsterId = n.get("monsterId").asText();
+        }
+
+        roomsById.put(
+            id,
+            Room.builder()
+                .id(id)
+                .name(name)
+                .description(description)
+                .exits(exits)
+                .itemIds(itemIds)
+                .puzzleId(puzzleId)
+                .monsterId(monsterId)
+                .build());
       }
     }
 
