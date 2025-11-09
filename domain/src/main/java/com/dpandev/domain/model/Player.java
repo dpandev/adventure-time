@@ -5,10 +5,10 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Represents a player in the game with attributes such as ID, name, score, current room, inventory
- * items, and puzzles solved.
+ * Represents a player in the game with attributes such as name, score, current room, inventory
+ * items, puzzles solved, and rooms visited.
  */
-public final class Player {
+public final class Player extends Character {
   private final UUID id = UUID.randomUUID();
   private String name;
   private int score;
@@ -23,12 +23,14 @@ public final class Player {
    * @param name The name of the player.
    */
   public Player(String name, String startingRoomId) {
+    super(name, 100);
     this.roomId = startingRoomId;
-    this.name = name;
     this.score = 0;
     this.inventoryItems = new ArrayList<String>();
     this.puzzlesSolved = new ArrayList<String>();
     this.roomsVisited = new ArrayList<String>();
+    this.baseAttack = 10;
+    this.baseDefense = 0;
   }
 
   /**
