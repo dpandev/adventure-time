@@ -1,6 +1,7 @@
 package com.dpandev.domain.world;
 
 import com.dpandev.domain.model.Item;
+import com.dpandev.domain.model.Monster;
 import com.dpandev.domain.model.Puzzle;
 import com.dpandev.domain.model.Room;
 import java.util.Map;
@@ -13,6 +14,7 @@ public final class World {
   private final Map<String, Item> itemsById;
   private final Map<String, Puzzle> puzzlesById;
   private final String startRoomId;
+  private final Map<String, Monster> monstersById;
 
   /**
    * Constructor for World.
@@ -24,6 +26,8 @@ public final class World {
    *     Item object.
    * @param puzzles A map of puzzles in the world, where the key is the puzzle ID and the value is
    *     the Puzzle object.
+   * @param monsters A map of monsters in the world, where the key is the monster ID and the value
+   *     is
    * @param startRoomId The ID of the starting room in the world.
    */
   public World(
@@ -31,11 +35,13 @@ public final class World {
       Map<String, Room> rooms,
       Map<String, Item> items,
       Map<String, Puzzle> puzzles,
+      Map<String, Monster> monsters,
       String startRoomId) {
     this.version = version;
-    this.roomsById = rooms;
-    this.itemsById = items;
-    this.puzzlesById = puzzles;
+    this.roomsById = Map.copyOf(rooms);
+    this.itemsById = Map.copyOf(items);
+    this.puzzlesById = Map.copyOf(puzzles);
+    this.monstersById = Map.copyOf(monsters);
     this.startRoomId = startRoomId;
   }
 
@@ -73,6 +79,15 @@ public final class World {
    */
   public Map<String, Puzzle> getPuzzles() {
     return puzzlesById;
+  }
+
+  /**
+   * Gets the monsters in the world.
+   *
+   * @return A map of monsters in the world.
+   */
+  public Map<String, Monster> getMonsters() {
+    return monstersById;
   }
 
   /**

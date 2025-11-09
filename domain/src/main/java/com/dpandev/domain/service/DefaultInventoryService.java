@@ -8,6 +8,33 @@ import java.util.Optional;
 
 public final class DefaultInventoryService implements InventoryService {
 
+  private Optional<Item> findItemInCurrentRoom(GameContext ctx, String itemId) {
+    var player = ctx.player();
+    var world = ctx.world();
+
+    Optional<Room> roomOpt = world.findRoom(player.getRoomId());
+    if (roomOpt.isEmpty()) {
+      return Optional.empty();
+    }
+
+    var room = roomOpt.get();
+    if (room.hasItem(itemId)) {
+      return world.findItem(itemId);
+    }
+
+    return Optional.empty();
+  }
+
+  private Optional<Item> findItemInPlayerInventory(GameContext ctx, String itemId) {
+    var player = ctx.player();
+    var world = ctx.world();
+
+    return player.getInventoryItemIds().stream()
+        .filter(id -> id.equals(itemId))
+        .findFirst()
+        .flatMap(world::findItem);
+  }
+
   @Override
   public CommandResult inventory(GameContext ctx) {
     var player = ctx.player();
@@ -43,24 +70,21 @@ public final class DefaultInventoryService implements InventoryService {
     var player = ctx.player();
     var world = ctx.world();
 
-    // user will provide name, so find item by name
-    Optional<Item> itemOpt = world.findItem(itemId);
+    // validate current room before removing item from it.
+    Optional<Room> currentRoomOpt = world.getRoomById(player.getRoomId());
+    if (currentRoomOpt.isEmpty()) {
+      return CommandResult.fail("Your current location is unknown."); // this should not happen
+    }
+
+    Optional<Item> itemOpt = findItemInCurrentRoom(ctx, itemId);
     if (itemOpt.isEmpty()) {
       return CommandResult.fail("There is no " + itemId + " here to pick up.");
     }
 
     // add to player inv then remove from Room
-    player.addItemToInventory(itemOpt.get().getId());
-
-    // validate current room before removing item from it.
-    // TODO will need to move this check logic elsewhere later
-    Optional<Room> currentRoomOpt = world.getRoomById(player.getRoomId());
-    if (currentRoomOpt.isEmpty()) {
-      return CommandResult.fail("Your current location is unknown."); // this should not happen
-    }
-    // get the current Room object and remove the item from it
-    var currentRoom = currentRoomOpt.get();
-    currentRoom.getItemIds().remove(itemOpt.get().getId());
+    Item item = itemOpt.get();
+    player.addItemToInventory(item.getId());
+    currentRoomOpt.get().removeItemFromRoom(item.getId());
 
     return CommandResult.success(
         itemId
@@ -80,15 +104,16 @@ public final class DefaultInventoryService implements InventoryService {
       return CommandResult.fail("Your current location is unknown."); // this should not happen
     }
 
-    Optional<Item> itemOpt = world.findItem(itemId);
+    // Check if item is in player's inventory
+    Optional<Item> itemOpt = findItemInPlayerInventory(ctx, itemId);
     if (itemOpt.isEmpty()) {
-      return CommandResult.fail("There is no " + itemId + " to drop.");
+      return CommandResult.fail("You don't have a " + itemId + " to drop.");
     }
 
-    if (!player.removeItemFromInventory(itemId)) {
-      return CommandResult.fail("You don't have a " + itemId + ".");
-    }
-    roomOpt.get().getItemIds().add(itemId);
+    Item item = itemOpt.get();
+    player.removeItemFromInventory(itemId);
+    roomOpt.get().addItemToRoom(itemId);
+
     return CommandResult.success(
         itemId
             + " has been dropped successfully from the player inventory and placed in "
@@ -101,22 +126,25 @@ public final class DefaultInventoryService implements InventoryService {
     if (itemId == null || itemId.isBlank()) {
       return CommandResult.fail("Use what?");
     }
-    var player = ctx.player();
-    var world = ctx.world();
-    Optional<Item> itemOpt =
-        player.getInventoryItemIds().stream()
-            .filter(id -> id.equals(itemId))
-            .findFirst()
-            .flatMap(world::findItem);
-    if (itemOpt.isEmpty()) {
-      return CommandResult.fail("There is no " + itemId + " to use.");
+
+    // First, try to find in player inventory
+    Optional<Item> inventoryItemOpt = findItemInPlayerInventory(ctx, itemId);
+    if (inventoryItemOpt.isPresent()) {
+      Item item = inventoryItemOpt.get();
+      // Handle inventory item usage (potion, key, etc.)
+      return CommandResult.success("You use the " + item.getName() + ".");
     }
 
-    if (!player.hasItemInInventory(itemId)) {
-      return CommandResult.fail("You don't have a " + itemId + ".");
+    // If not in inventory, check if it's a fixture in the current room
+    Optional<Item> roomItemOpt = findItemInCurrentRoom(ctx, itemId);
+    if (roomItemOpt.isPresent()) {
+      Item item = roomItemOpt.get();
+      // Handle room fixture usage (lever, switch, etc.)
+      return CommandResult.success(
+          "You interact with the " + item.getName() + ". (Nothing special happens.)");
     }
 
-    return CommandResult.success("You use the " + itemId + ". (Nothing special happens.)");
+    return CommandResult.fail("You don't see a " + itemId + " to use.");
   }
 
   @Override
@@ -125,17 +153,20 @@ public final class DefaultInventoryService implements InventoryService {
       return CommandResult.fail("Inspect what?");
     }
 
-    var player = ctx.player();
-    var world = ctx.world();
-    Optional<Item> itemOpt = world.findItem(itemId);
-    if (itemOpt.isEmpty()) {
-      return CommandResult.fail("There is no " + itemId + " to inspect.");
+    // First, try to find in player inventory
+    Optional<Item> inventoryItemOpt = findItemInPlayerInventory(ctx, itemId);
+    if (inventoryItemOpt.isPresent()) {
+      Item item = inventoryItemOpt.get();
+      return CommandResult.success(item.getName() + ": " + item.getDescription());
     }
 
-    if (!player.hasItemInInventory(itemId)) {
-      return CommandResult.fail("You don't have a " + itemId + ".");
+    // If not in inventory, check if it's in the current room
+    Optional<Item> roomItemOpt = findItemInCurrentRoom(ctx, itemId);
+    if (roomItemOpt.isPresent()) {
+      Item item = roomItemOpt.get();
+      return CommandResult.success(item.getName() + ": " + item.getDescription());
     }
 
-    return CommandResult.success(itemId + ": " + itemOpt.get().getDescription());
+    return CommandResult.fail("You don't see a " + itemId + " to inspect.");
   }
 }

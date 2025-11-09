@@ -1,5 +1,6 @@
 package com.dpandev.domain.model;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -11,39 +12,16 @@ public final class Room {
   private final Map<String, String> exits;
   private final List<String> itemIds;
   private String puzzleId;
+  private String monsterId;
 
-  /**
-   * Constructor for Room.
-   *
-   * @param id The unique identifier for the room.
-   * @param name The name of the room.
-   * @param description A description of the room.
-   * @param exits A map of exits from the room, where the key is the direction and the value is the
-   *     ID of the connected room.
-   * @param itemIds A list of item IDs present in the room.
-   */
-  public Room(
-      String id, String name, String description, Map<String, String> exits, List<String> itemIds) {
-    this.id = id;
-    this.name = name;
-    this.description = description;
-    this.exits = exits;
-    this.itemIds = itemIds;
-  }
-
-  public Room(
-      String id,
-      String name,
-      String description,
-      Map<String, String> exits,
-      List<String> itemIds,
-      String puzzleId) {
-    this.id = id;
-    this.name = name;
-    this.description = description;
-    this.exits = exits;
-    this.itemIds = itemIds;
-    this.puzzleId = puzzleId;
+  public Room(Builder builder) {
+    this.id = builder.id;
+    this.name = builder.name;
+    this.description = builder.description;
+    this.exits = Map.copyOf(builder.exits != null ? builder.exits : Map.of());
+    this.itemIds = new ArrayList<>(builder.itemIds != null ? builder.itemIds : List.of());
+    this.puzzleId = builder.puzzleId;
+    this.monsterId = builder.monsterId;
   }
 
   public String getId() {
@@ -68,5 +46,76 @@ public final class Room {
 
   public List<String> getItemIds() {
     return itemIds;
+  }
+
+  public void addItemToRoom(String itemId) {
+    this.itemIds.add(itemId);
+  }
+
+  public boolean hasItem(String itemId) {
+    return this.itemIds.contains(itemId);
+  }
+
+  public void removeItemFromRoom(String itemId) {
+    this.itemIds.remove(itemId);
+  }
+
+  public String getMonsterId() {
+    return monsterId;
+  }
+
+  /** Builder pattern for creating Room instances */
+  public static Builder builder() {
+    return new Builder();
+  }
+
+  /** Builder class for Room */
+  public static class Builder {
+    private String id;
+    private String name;
+    private String description;
+    private Map<String, String> exits;
+    private List<String> itemIds;
+    private String puzzleId;
+    private String monsterId;
+
+    public Builder id(String id) {
+      this.id = id;
+      return this;
+    }
+
+    public Builder name(String name) {
+      this.name = name;
+      return this;
+    }
+
+    public Builder description(String description) {
+      this.description = description;
+      return this;
+    }
+
+    public Builder exits(Map<String, String> exits) {
+      this.exits = exits;
+      return this;
+    }
+
+    public Builder itemIds(List<String> itemIds) {
+      this.itemIds = itemIds;
+      return this;
+    }
+
+    public Builder puzzleId(String puzzleId) {
+      this.puzzleId = puzzleId;
+      return this;
+    }
+
+    public Builder monsterId(String monsterId) {
+      this.monsterId = monsterId;
+      return this;
+    }
+
+    public Room build() {
+      return new Room(this);
+    }
   }
 }

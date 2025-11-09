@@ -1,6 +1,7 @@
 package com.dpandev.domain.world;
 
 import com.dpandev.domain.model.Item;
+import com.dpandev.domain.model.Monster;
 import com.dpandev.domain.model.Puzzle;
 import com.dpandev.domain.model.PuzzleType;
 import com.dpandev.domain.model.Room;
@@ -61,6 +62,22 @@ public final class JsonWorldLoader implements WorldLoader {
         String name = reqText(n, "name");
         String description = optText(n, "description", "");
         itemsById.put(id, new Item(id, name, description));
+      }
+    }
+
+    // Monsters
+    Map<String, Monster> monstersById = new HashMap<>();
+    JsonNode monsters = root.path("monsters");
+    if (monsters.isArray()) {
+      for (JsonNode n : monsters) {
+        String id = reqText(n, "id");
+        String name = reqText(n, "name");
+        String description = optText(n, "description", "");
+        int maxHealth = n.path("maxHealth").asInt(30);
+        int baseAttack = n.path("baseAttack").asInt(5);
+        int baseDefense = n.path("baseDefense").asInt(0);
+
+        monstersById.put(id, new Monster(name, description, maxHealth, baseAttack, baseDefense));
       }
     }
 
@@ -144,7 +161,23 @@ public final class JsonWorldLoader implements WorldLoader {
           puzzleId = n.get("puzzleId").asText();
         }
 
-        roomsById.put(id, new Room(id, name, description, exits, itemIds, puzzleId));
+        // Parse monster field
+        String monsterId = null;
+        if (n.hasNonNull("monsterId")) {
+          monsterId = n.get("monsterId").asText();
+        }
+
+        roomsById.put(
+            id,
+            Room.builder()
+                .id(id)
+                .name(name)
+                .description(description)
+                .exits(exits)
+                .itemIds(itemIds)
+                .puzzleId(puzzleId)
+                .monsterId(monsterId)
+                .build());
       }
     }
 
@@ -182,7 +215,7 @@ public final class JsonWorldLoader implements WorldLoader {
       throw new IllegalStateException("startRoomId '" + startRoomId + "' not found.");
     }
 
-    return new World(version, roomsById, itemsById, puzzlesById, startRoomId);
+    return new World(version, roomsById, itemsById, puzzlesById, monstersById, startRoomId);
   }
 
   // ---------------------- minimal helpers ----------------------

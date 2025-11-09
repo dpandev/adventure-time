@@ -11,15 +11,31 @@
     { "id": "mystic_key", "name": "Mystic Key", "description": "Rusty old key. Probably opens something." },
     { "id": "healing_potion", "name": "Healing Potion", "description": "Smells like death, but restores your health." }
   ],
+  "monsters": [
+    {
+      "id": "ice_troll",
+      "name": "Ice Troll",
+      "description": "A hulking frost-covered beast with razor-sharp claws.",
+      "maxHealth": 50,
+      "baseAttack": 8,
+      "baseDefense": 5
+    },
+    {
+      "id": "frost_sprite",
+      "name": "Frost Sprite",
+      "description": "A small, mischievous ice creature.",
+      "maxHealth": 20,
+      "baseAttack": 4,
+      "baseDefense": 2
+    }
+  ],
   "rooms": [
     {
       "id": "entrance",
       "name": "Frozen Gate",
       "description": "An icy archway looms ahead.",
       "exits": { "north": "hall" },
-      "itemIds": [
-        "mystic_key"
-      ],
+      "itemIds": ["mystic_key"],
       "puzzles": [
         {
           "id": "riddle_1",
@@ -35,19 +51,16 @@
       "id": "hall",
       "name": "Crystal Hall",
       "description": "Shards glitter underfoot.",
-      "itemIds": [
-        "ice_shard"
-      ],
+      "itemIds": ["ice_shard"],
+      "monsterId": "ice_troll",
       "exits": { "south": "entrance", "east": "chamber" }
     },
     {
       "id": "chamber",
       "name": "Chamber of Secrets",
       "description": "A hidden room filled with ancient knowledge.",
-      "itemIds": [
-        "ancient_scroll",
-        "healing_potion"
-      ],
+      "itemIds": ["ancient_scroll", "healing_potion"],
+      "monsterId": "frost_sprite",
       "exits": { "west": "hall" }
     }
   ]
