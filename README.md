@@ -44,9 +44,7 @@ Want to play the game? Start here:
 
 ---
 
-### For Developers
-
-Want to contribute or modify the game?
+### For Development
 
 **1. Setup your environment:**
 - Generate the wrapper: `gradle wrapper --gradle-version 8.14.3`

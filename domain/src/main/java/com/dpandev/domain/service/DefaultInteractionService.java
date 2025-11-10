@@ -70,8 +70,27 @@ public class DefaultInteractionService implements InteractionService {
     if (playerAnswer.equals(correctAnswer)) {
       puzzle.setPuzzlePhase(Puzzle.PuzzlePhase.SOLVED);
       ctx.setAwaitingPuzzleAnswer(false);
-      return CommandResult.success(
-          "Correct! You have solved the puzzle.\n" + "The way forward is now clear.");
+
+      if (!player.getPuzzlesSolved().contains(puzzle.getId())) {
+        player.getPuzzlesSolved().add(puzzle.getId());
+      }
+
+      StringBuilder successMessage = new StringBuilder();
+      successMessage.append("Correct! You have solved the puzzle.\n");
+
+      // Check for reward item
+      String rewardItemId = puzzle.getRewardItemId();
+      if (rewardItemId != null && !rewardItemId.isBlank()) {
+        var itemOpt = world.findItem(rewardItemId);
+        if (itemOpt.isPresent()) {
+          player.addItemToInventory(rewardItemId);
+          successMessage.append("You received: ").append(itemOpt.get().getName()).append("\n");
+        }
+      }
+
+      successMessage.append("The way forward is now clear.");
+
+      return CommandResult.success(successMessage.toString());
     } else {
       // wrong answer - decrement attempts
       int attemptsLeft = puzzle.decrementAttemptsLeft();

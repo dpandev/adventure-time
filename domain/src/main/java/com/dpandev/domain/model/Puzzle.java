@@ -9,6 +9,7 @@ public class Puzzle {
   private final PuzzleType puzzleType;
   private final int maxAttempts;
   private int attemptsLeft;
+  private final String rewardItemId;
 
   /** Different phases a puzzle can be in */
   public enum PuzzlePhase {
@@ -29,6 +30,8 @@ public class Puzzle {
    * @param puzzleType Type of the puzzle (e.g., RIDDLE, CODE, PHYSICAL)
    * @param solution Solution to the puzzle
    * @param puzzlePhase Current phase of the puzzle
+   * @param maxAttempts Maximum number of attempts allowed
+   * @param rewardItemId ID of the item to reward when puzzle is solved (can be null)
    */
   public Puzzle(
       String id,
@@ -36,7 +39,8 @@ public class Puzzle {
       PuzzleType puzzleType,
       Map<String, Object> solution,
       PuzzlePhase puzzlePhase,
-      int maxAttempts) {
+      int maxAttempts,
+      String rewardItemId) {
     this.id = id;
     this.description = description;
     this.puzzleType = puzzleType;
@@ -44,6 +48,7 @@ public class Puzzle {
     this.puzzlePhase = puzzlePhase;
     this.maxAttempts = maxAttempts;
     this.attemptsLeft = maxAttempts;
+    this.rewardItemId = rewardItemId;
   }
 
   /** Getters and Setters */
@@ -92,6 +97,10 @@ public class Puzzle {
 
   public Map<String, Object> getSolution() {
     return solution;
+  }
+
+  public String getRewardItemId() {
+    return rewardItemId;
   }
 
   public void setSolution(Map<String, Object> solution) {

@@ -179,10 +179,18 @@ public final class JsonWorldLoader implements WorldLoader {
           // Use prompt as description if provided, otherwise use description
           String finalDescription = prompt.isEmpty() ? pDescription : prompt;
 
+          String rewardItemId = optText(puzzleNode, "rewardItemId", null);
+
           puzzlesById.put(
               pId,
               new Puzzle(
-                  pId, finalDescription, type, solution, Puzzle.PuzzlePhase.LOCKED, maxAttempts));
+                  pId,
+                  finalDescription,
+                  type,
+                  solution,
+                  Puzzle.PuzzlePhase.LOCKED,
+                  maxAttempts,
+                  rewardItemId));
           puzzleId = pId;
         }
 
@@ -237,7 +245,10 @@ public final class JsonWorldLoader implements WorldLoader {
                 n.path("solution").isMissingNode() ? Map.<String, Object>of() : n.path("solution"),
                 new TypeReference<Map<String, Object>>() {});
 
-        puzzlesById.put(id, new Puzzle(id, description, type, solution, phase, maxAttempts));
+        String rewardItemId = optText(n, "rewardItemId", null);
+
+        puzzlesById.put(
+            id, new Puzzle(id, description, type, solution, phase, maxAttempts, rewardItemId));
       }
     }
 
