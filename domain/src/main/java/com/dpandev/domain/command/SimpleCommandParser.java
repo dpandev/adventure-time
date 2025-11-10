@@ -71,8 +71,10 @@ public class SimpleCommandParser implements CommandParser {
         || verb == Verb.USE
         || verb == Verb.EQUIP
         || verb == Verb.UNEQUIP
-        || verb == Verb.HEAL) {
-      // multi-word targets allowed ("pickup steel sword", "equip iron helmet")
+        || verb == Verb.HEAL
+        || verb == Verb.ATTACK
+        || verb == Verb.IGNORE) {
+      // multi-word targets allowed ("pickup steel sword", "equip iron helmet", "attack ice troll")
       if (tokens.size() >= 2) {
         target = String.join(" ", tokens.subList(1, tokens.size()));
         args = List.copyOf(tokens.subList(1, tokens.size()));
@@ -138,6 +140,11 @@ public class SimpleCommandParser implements CommandParser {
     verbMap.put("stats", Verb.STATS);
     verbMap.put("status", Verb.STATS);
     verbMap.put("health", Verb.STATS);
+    verbMap.put("attack", Verb.ATTACK);
+    verbMap.put("fight", Verb.ATTACK);
+    verbMap.put("ignore", Verb.IGNORE);
+    verbMap.put("flee", Verb.IGNORE);
+    verbMap.put("run", Verb.IGNORE);
     verbMap.put("quit", Verb.QUIT);
     verbMap.put("save", Verb.SAVE);
     verbMap.put("load", Verb.LOAD);

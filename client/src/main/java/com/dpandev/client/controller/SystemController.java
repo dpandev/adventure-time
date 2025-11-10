@@ -34,6 +34,9 @@ public class SystemController implements CommandController {
                   + "  unequip <item> - Unequip an item\n"
                   + "  use <item> - Use an item\n"
                   + "  stats - View your character stats\n"
+                  + "  attack <monster> - Attack a monster (starts combat)\n"
+                  + "  ignore <monster> - Ignore a monster (makes it disappear)\n"
+                  + "  heal - Use a healing potion during combat\n"
                   + "  save - Save your game\n"
                   + "  quit - Save and quit the game");
       case SAVE -> {

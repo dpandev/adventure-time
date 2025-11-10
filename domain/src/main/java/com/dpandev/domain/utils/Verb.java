@@ -14,6 +14,8 @@ public enum Verb {
   HEAL,
   SOLVE,
   STATS,
+  ATTACK,
+  IGNORE,
   HELP,
   SAVE,
   QUIT,
