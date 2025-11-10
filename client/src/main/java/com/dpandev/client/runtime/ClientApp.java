@@ -51,7 +51,11 @@ public final class ClientApp {
     InventoryService inventoryService = new DefaultInventoryService();
     CombatService combatService = new DefaultCombatService();
     MapService mapService = new DefaultMapService();
-    var saveDirectory = Path.of("saves");
+
+    // Use system property for saves directory, or default to "saves" in current working directory
+    // This allows configuration via -Dsaves.dir=/path/to/saves if needed
+    String savesPath = System.getProperty("saves.dir", "saves");
+    var saveDirectory = Path.of(savesPath).toAbsolutePath();
     SaveService saveService = new SaveService(new FileSaveRepository(saveDirectory));
 
     // init controllers here

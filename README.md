@@ -67,21 +67,15 @@ View [Gameplay Demo Video](~~link~~)
 
 ### Choose Your Adventure
 
-**Frozen World (Default):**
 ```bash
-./gradlew :client:run
-# or explicitly:
-./gradlew :client:run --args="--world=example"
-```
+# Build and run with default (Frozen World) worldpack (example)
+./run-client.sh
 
-**Jurassic Park World:**
-```bash
-./gradlew :client:run --args="--world=jurassic"
-```
+# Run with jurassic worldpack
+./run-client.sh jurassic
 
-**Willy Wonka's Chocolate Factory:**
-```bash
-./gradlew :client:run --args="--world=wonka"
+# Run with any custom worldpack name
+./run-client.sh my-custom-world
 ```
 
 *All worldpacks are located in `client/src/main/resources/worldpacks/`*

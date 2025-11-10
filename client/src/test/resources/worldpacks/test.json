@@ -1,0 +1,37 @@
+{
+  "version": "1.0",
+  "type": "world",
+  "id": "test",
+  "name": "Test World",
+  "startRoomId": "test_start",
+  "items": [
+    {
+      "id": "test_sword",
+      "name": "Test Sword",
+      "description": "A sword for testing",
+      "type": "WEAPON",
+      "attackBonus": 5
+    }
+  ],
+  "monsters": [
+    {
+      "id": "test_monster",
+      "name": "Test Monster",
+      "description": "A monster for testing",
+      "maxHealth": 10,
+      "baseAttack": 3,
+      "baseDefense": 1,
+      "criticalHitThreshold": 0.2
+    }
+  ],
+  "rooms": [
+    {
+      "id": "test_start",
+      "name": "Test Start Room",
+      "description": "This is a test room for integration testing",
+      "exits": {},
+      "itemIds": ["test_sword"]
+    }
+  ]
+}
+
