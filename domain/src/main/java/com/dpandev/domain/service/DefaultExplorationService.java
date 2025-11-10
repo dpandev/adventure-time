@@ -1,5 +1,6 @@
 package com.dpandev.domain.service;
 
+import com.dpandev.domain.model.Item;
 import com.dpandev.domain.model.Room;
 import com.dpandev.domain.utils.GameContext;
 import java.util.Optional;
@@ -35,9 +36,17 @@ public final class DefaultExplorationService implements ExplorationService {
         .append(room.getDescription())
         .append("\n");
 
-    // list items in the room
+    // list items in the room by name
     if (!room.getItemIds().isEmpty()) {
-      sb.append("You see: ").append(String.join(", ", room.getItemIds())).append("\n");
+      sb.append("You see: ");
+      var itemNames =
+          room.getItemIds().stream()
+              .map(world::findItem)
+              .filter(Optional::isPresent)
+              .map(Optional::get)
+              .map(Item::getName)
+              .toList();
+      sb.append(String.join(", ", itemNames)).append("\n");
     } else {
       sb.append("There are no items here.\n");
     }
@@ -89,17 +98,55 @@ public final class DefaultExplorationService implements ExplorationService {
 
     // Check if destination room has a puzzle and delegate to InteractionService
     Optional<Room> destRoomOpt = world.getRoomById(destRoomId);
-    if (destRoomOpt.isPresent()) {
-      Room destRoom = destRoomOpt.get();
-      if (destRoom.getPuzzleId() != null) {
-        CommandResult puzzleResult = interactionService.presentPuzzle(ctx, destRoom.getPuzzleId());
-        if (puzzleResult != null) {
-          return CommandResult.success("You move " + direction + ".\n\n" + puzzleResult.message());
-        }
+    if (destRoomOpt.isEmpty()) {
+      return CommandResult.fail("Unable to enter the destination room.");
+    }
+
+    Room destRoom = destRoomOpt.get();
+    String roomDescription = formatRoomEntry(destRoom);
+
+    if (destRoom.getPuzzleId() != null) {
+      CommandResult puzzleResult = interactionService.presentPuzzle(ctx, destRoom.getPuzzleId());
+      if (puzzleResult != null) {
+        return CommandResult.success(roomDescription + "\n\n" + puzzleResult.message());
       }
     }
 
-    return CommandResult.success("You move " + direction + ".");
+    return CommandResult.success(roomDescription);
+  }
+
+  @Override
+  public CommandResult describeCurrentRoom(GameContext ctx) {
+    var world = ctx.world();
+    var player = ctx.player();
+
+    Optional<Room> currentRoomOpt = world.getRoomById(player.getRoomId());
+    if (currentRoomOpt.isEmpty()) {
+      return CommandResult.fail("You seem to be in an unknown location.");
+    }
+
+    Room room = currentRoomOpt.get();
+    String roomDescription = formatRoomEntry(room);
+    return CommandResult.success(roomDescription);
+  }
+
+  /**
+   * Format the room entry message showing name, description, and exits.
+   *
+   * @param room the room to format
+   * @return formatted room description
+   */
+  private String formatRoomEntry(Room room) {
+    StringBuilder sb = new StringBuilder();
+    sb.append(room.getName()).append("\n");
+    sb.append(room.getDescription()).append("\n");
+
+    // show exits
+    if (!room.getExits().isEmpty()) {
+      sb.append("Exits: ").append(String.join(", ", room.getExits().keySet()));
+    }
+
+    return sb.toString();
   }
 
   /* helpers */
@@ -116,9 +163,5 @@ public final class DefaultExplorationService implements ExplorationService {
 
   private boolean isValidExit(String direction, Room room) {
     return room.getExits().containsKey(direction.toLowerCase());
-  }
-
-  private boolean isCurrentRoomValid(GameContext ctx) {
-    return ctx.world().getRoomById(ctx.player().getRoomId()).isPresent();
   }
 }
