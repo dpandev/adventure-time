@@ -1,5 +1,6 @@
 package com.dpandev.client.runtime;
 
+import com.dpandev.client.controller.CombatController;
 import com.dpandev.client.controller.CommandController;
 import com.dpandev.client.controller.FrontController;
 import com.dpandev.client.controller.InteractionController;
@@ -11,6 +12,8 @@ import com.dpandev.client.view.ConsoleView;
 import com.dpandev.domain.command.CommandParser;
 import com.dpandev.domain.command.SimpleCommandParser;
 import com.dpandev.domain.model.Player;
+import com.dpandev.domain.service.CombatService;
+import com.dpandev.domain.service.DefaultCombatService;
 import com.dpandev.domain.service.DefaultExplorationService;
 import com.dpandev.domain.service.DefaultInteractionService;
 import com.dpandev.domain.service.DefaultInventoryService;
@@ -41,6 +44,7 @@ public final class ClientApp {
     InteractionService interactionService = new DefaultInteractionService();
     ExplorationService explorationService = new DefaultExplorationService(interactionService);
     InventoryService inventoryService = new DefaultInventoryService();
+    CombatService combatService = new DefaultCombatService();
     var saveDirectory = Path.of("saves");
     SaveService saveService = new SaveService(new FileSaveRepository(saveDirectory));
 
@@ -48,6 +52,7 @@ public final class ClientApp {
     CommandController movementController = new MovementController(explorationService);
     CommandController inventoryController = new InventoryController(inventoryService);
     CommandController interactionController = new InteractionController(interactionService);
+    CommandController combatController = new CombatController(combatService);
     CommandController systemController = new SystemController(saveService, view);
 
     // init front controller here and pass controllers as map with verb categories as keys
@@ -56,7 +61,7 @@ public final class ClientApp {
             Map.of(
                 VerbCategory.MOVEMENT, movementController,
                 VerbCategory.INVENTORY, inventoryController,
-                VerbCategory.INTERACTION, interactionController,
+                VerbCategory.INTERACTION, combatController,
                 VerbCategory.SYSTEM, systemController),
             systemController // fallback to system controller
             );

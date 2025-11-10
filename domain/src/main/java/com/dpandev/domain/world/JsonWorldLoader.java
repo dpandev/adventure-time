@@ -102,8 +102,12 @@ public final class JsonWorldLoader implements WorldLoader {
         int maxHealth = n.path("maxHealth").asInt(30);
         int baseAttack = n.path("baseAttack").asInt(5);
         int baseDefense = n.path("baseDefense").asInt(0);
+        double criticalHitThreshold = n.path("criticalHitThreshold").asDouble(0.3); // Default 30%
 
-        monstersById.put(id, new Monster(name, description, maxHealth, baseAttack, baseDefense));
+        monstersById.put(
+            id,
+            new Monster(
+                name, description, maxHealth, baseAttack, baseDefense, criticalHitThreshold));
       }
     }
 

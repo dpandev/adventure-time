@@ -1,9 +1,11 @@
 package com.dpandev.domain.service;
 
 import com.dpandev.domain.model.Item;
+import com.dpandev.domain.model.Monster;
 import com.dpandev.domain.model.Player;
 import com.dpandev.domain.model.Room;
 import com.dpandev.domain.utils.GameContext;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -197,7 +199,7 @@ public final class DefaultInventoryService implements InventoryService {
       return CommandResult.success("You use the " + item.getName() + ".");
     }
 
-    // If not in inventory, check if it's a fixture in the current room
+    // If not in inventory, check if it's a fixture in the current room(e.g.,lever)
     Optional<Item> roomItemOpt = findItemInCurrentRoom(ctx, userInput);
     if (roomItemOpt.isPresent()) {
       Item item = roomItemOpt.get();
@@ -215,21 +217,86 @@ public final class DefaultInventoryService implements InventoryService {
       return CommandResult.fail("Inspect what?");
     }
 
-    // First, try to find in player inventory
+    var world = ctx.world();
+
+    // try to find in player inventory
     Optional<Item> inventoryItemOpt = findItemInPlayerInventory(ctx, userInput);
     if (inventoryItemOpt.isPresent()) {
       Item item = inventoryItemOpt.get();
-      return CommandResult.success(item.getName() + ": " + item.getDescription());
+      return CommandResult.success(formatItemDescription(item));
     }
 
-    // If not in inventory, check if it's in the current room
+    // If not in inventory, check if in the current room
     Optional<Item> roomItemOpt = findItemInCurrentRoom(ctx, userInput);
     if (roomItemOpt.isPresent()) {
       Item item = roomItemOpt.get();
-      return CommandResult.success(item.getName() + ": " + item.getDescription());
+      return CommandResult.success(formatItemDescription(item));
+    }
+
+    // Check if it's a monster in the current room
+    Optional<Room> currentRoomOpt = world.getRoomById(ctx.player().getRoomId());
+    if (currentRoomOpt.isPresent()) {
+      Room room = currentRoomOpt.get();
+      if (room.getMonsterId() != null) {
+        Optional<Monster> monsterOpt = world.findMonster(room.getMonsterId());
+        if (monsterOpt.isPresent()) {
+          Monster monster = monsterOpt.get();
+          if (monster.getName().equalsIgnoreCase(userInput) && monster.isAlive()) {
+            return CommandResult.success(formatMonsterDescription(monster));
+          }
+        }
+      }
     }
 
     return CommandResult.fail("You don't see a " + userInput + " to inspect.");
+  }
+
+  /**
+   * Format item description with bonuses.
+   *
+   * @param item the item to format
+   * @return formatted item description
+   */
+  private String formatItemDescription(Item item) {
+    StringBuilder sb = new StringBuilder();
+    sb.append(item.getName()).append(": ").append(item.getDescription());
+
+    // Show bonuses if the item has any
+    List<String> bonuses = new ArrayList<>();
+    if (item.getAttackBonus() > 0) {
+      bonuses.add("+" + item.getAttackBonus() + " Attack");
+    }
+    if (item.getDefenseBonus() > 0) {
+      bonuses.add("+" + item.getDefenseBonus() + " Defense");
+    }
+    if (item.getHealthRestore() > 0) {
+      bonuses.add("Restores " + item.getHealthRestore() + " HP");
+    }
+
+    if (!bonuses.isEmpty()) {
+      sb.append("\n[").append(String.join(", ", bonuses)).append("]");
+    }
+
+    return sb.toString();
+  }
+
+  /**
+   * Format monster description with stats.
+   *
+   * @param monster the monster to format
+   * @return formatted monster description
+   */
+  private String formatMonsterDescription(Monster monster) {
+    StringBuilder sb = new StringBuilder();
+    sb.append(monster.getName()).append(": ").append(monster.getDescription());
+    sb.append("\n[HP: ")
+        .append(monster.getCurrentHealth())
+        .append("/")
+        .append(monster.getMaxHealth());
+    sb.append(", Attack: ").append(monster.getBaseAttack());
+    sb.append(", Defense: ").append(monster.getBaseDefense());
+    sb.append("]");
+    return sb.toString();
   }
 
   @Override

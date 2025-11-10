@@ -26,10 +26,66 @@ A multi-player co-op adventure game that features map exploration, puzzles/quest
 
 ## Quick Start
 
+### For Players
+
+Want to play the game? Start here:
+
+**1. Run the game:**
+```bash
+./gradlew :client:run
+```
+
+**2. Learn the basics:**
+- [Player Quickstart Guide](docs/players/quickstart.md) - Get started in 5 minutes
+- [Commands Reference](docs/players/commands.md) - Complete list of all commands
+- [FAQ](docs/players/faq.md) - Common questions and troubleshooting
+
+**3. Type `help` in-game** for a quick command reference.
+
+---
+
+### For Developers
+
+Want to contribute or modify the game?
+
+**1. Setup your environment:**
 - Generate the wrapper: `gradle wrapper --gradle-version 8.14.3`
 - Build everything: `./gradlew clean build`
-- Run console client: `./gradlew :client:run`
-- ~~Run server: `./gradlew :server:bootRun`~~ (works, but not yet implemented)
+
+**2. Run the game:**
+- Console client: `./gradlew :client:run`
+- ~~Server: `./gradlew :server:bootRun`~~ (works, but not yet fully implemented)
+
+**3. Read the docs:**
+- [Developer Setup](docs/dev/dev-setup.md) - Development environment setup
+- [Architecture](docs/dev/architecture.md) - System design and structure
+- [API Documentation](docs/dev/api/) - Code reference
+- [Testing Guide](docs/dev/testing.md) - How to test
+- [Runbook](docs/dev/runbook.md) - Operations guide
+
+**4. Create custom content:**
+- [Content Packs Guide](docs/admin/content-packs.md) - Create worlds, items, monsters, puzzles
+- Worldpacks location: [client/src/main/resources/worldpacks/](client/src/main/resources/worldpacks)
+
+---
+
+## Documentation
+
+### Player Documentation
+- [Quickstart Guide](docs/players/quickstart.md) - Get started playing in 5 minutes
+- [Commands Reference](docs/players/commands.md) - Complete command list with examples
+- [FAQ](docs/players/faq.md) - Frequently asked questions and troubleshooting
+
+### Developer Documentation
+- [Developer Setup](docs/dev/dev-setup.md) - Environment setup and installation
+- [Architecture Overview](docs/dev/architecture.md) - System design and structure
+- [Testing Guide](docs/dev/testing.md) - Testing strategies and examples
+- [Runbook](docs/dev/runbook.md) - Operations and deployment
+- [ADR (Architecture Decision Records)](docs/dev/adr/) - Design decisions
+
+### Admin Documentation
+- [Content Packs Guide](docs/admin/content-packs.md) - Create custom worlds and content
+- [Setup Guide](docs/admin/setup.md) - Administrative setup
 
 ---
 

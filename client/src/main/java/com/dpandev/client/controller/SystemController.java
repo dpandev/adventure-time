@@ -23,7 +23,22 @@ public class SystemController implements CommandController {
     return switch (cmd.verb()) {
       case HELP ->
           CommandResult.success(
-              "Available commands: \nlook, go <dir>, inventory, pickup <item>, drop <item>, use <item>, save, quit");
+              "Available commands:\n"
+                  + "  look - Look around the room\n"
+                  + "  go <dir> - Move in a direction (north, south, east, west, up, down)\n"
+                  + "  inventory (i) - View your inventory\n"
+                  + "  pickup <item> - Pick up an item\n"
+                  + "  drop <item> - Drop an item\n"
+                  + "  inspect <item/monster> - Examine an item or monster\n"
+                  + "  equip <item> - Equip an item\n"
+                  + "  unequip <item> - Unequip an item\n"
+                  + "  use <item> - Use an item\n"
+                  + "  stats - View your character stats\n"
+                  + "  attack <monster> - Attack a monster (starts combat)\n"
+                  + "  ignore <monster> - Ignore a monster (makes it disappear)\n"
+                  + "  heal - Use a healing potion during combat\n"
+                  + "  save - Save your game\n"
+                  + "  quit - Save and quit the game");
       case SAVE -> {
         save.saveData(ctx);
         yield CommandResult.success("Game saved successfully.");

@@ -10,6 +10,9 @@ public final class GameContext {
   public final Player player;
   // Flag indicating if the game is awaiting a puzzle answer from the player
   private boolean awaitingPuzzleAnswer = false;
+  // Combat state
+  private boolean inCombat = false;
+  private String combatMonsterId = null;
 
   /**
    * Constructs a GameContext with the specified world and player.
@@ -57,5 +60,57 @@ public final class GameContext {
    */
   public void setAwaitingPuzzleAnswer(boolean awaiting) {
     this.awaitingPuzzleAnswer = awaiting;
+  }
+
+  /**
+   * Check if the player is currently in combat.
+   *
+   * @return true if in combat, false otherwise
+   */
+  public boolean isInCombat() {
+    return inCombat;
+  }
+
+  /**
+   * Set whether the player is in combat.
+   *
+   * @param inCombat true if in combat, false otherwise
+   */
+  public void setInCombat(boolean inCombat) {
+    this.inCombat = inCombat;
+  }
+
+  /**
+   * Get the ID of the monster currently being fought.
+   *
+   * @return the monster ID, or null if not in combat
+   */
+  public String getCombatMonsterId() {
+    return combatMonsterId;
+  }
+
+  /**
+   * Set the ID of the monster currently being fought.
+   *
+   * @param monsterId the monster ID
+   */
+  public void setCombatMonsterId(String monsterId) {
+    this.combatMonsterId = monsterId;
+  }
+
+  /**
+   * Start combat with a monster.
+   *
+   * @param monsterId the ID of the monster to fight
+   */
+  public void startCombat(String monsterId) {
+    this.inCombat = true;
+    this.combatMonsterId = monsterId;
+  }
+
+  /** End combat and clear combat state. */
+  public void endCombat() {
+    this.inCombat = false;
+    this.combatMonsterId = null;
   }
 }

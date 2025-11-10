@@ -19,6 +19,7 @@ public final class MovementController implements CommandController {
     return switch (cmd.verb()) {
       case LOOK -> exploration.look(ctx);
       case GO -> exploration.move(ctx, cmd.target());
+      case STATS -> exploration.showStats(ctx);
       default -> CommandResult.fail("Unsupported verb for movement: " + cmd.verb());
     };
   }

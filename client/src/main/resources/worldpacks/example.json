@@ -20,7 +20,8 @@
       "description": "A hulking frost-covered beast with razor-sharp claws.",
       "maxHealth": 50,
       "baseAttack": 8,
-      "baseDefense": 5
+      "baseDefense": 5,
+      "criticalHitThreshold": 0.25
     },
     {
       "id": "frost_sprite",
@@ -28,7 +29,8 @@
       "description": "A small, mischievous ice creature.",
       "maxHealth": 20,
       "baseAttack": 4,
-      "baseDefense": 2
+      "baseDefense": 2,
+      "criticalHitThreshold": 0.35
     }
   ],
   "rooms": [

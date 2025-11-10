@@ -36,6 +36,24 @@ public final class DefaultExplorationService implements ExplorationService {
         .append(room.getDescription())
         .append("\n");
 
+    // list monsters in the room
+    if (room.getMonsterId() != null) {
+      world
+          .findMonster(room.getMonsterId())
+          .ifPresent(
+              monster -> {
+                if (monster.isAlive()) {
+                  sb.append("There is a ")
+                      .append(monster.getName())
+                      .append(" here! (HP: ")
+                      .append(monster.getCurrentHealth())
+                      .append("/")
+                      .append(monster.getMaxHealth())
+                      .append(")\n");
+                }
+              });
+    }
+
     // list items in the room by name
     if (!room.getItemIds().isEmpty()) {
       sb.append("You see: ");
@@ -147,6 +165,77 @@ public final class DefaultExplorationService implements ExplorationService {
     }
 
     return sb.toString();
+  }
+
+  @Override
+  public CommandResult showStats(GameContext ctx) {
+    var player = ctx.player();
+    var world = ctx.world();
+
+    StringBuilder sb = new StringBuilder();
+    sb.append("=== ").append(player.getName()).append("'s Stats ===\n");
+    sb.append("Health: ")
+        .append(player.getCurrentHealth())
+        .append("/")
+        .append(player.getMaxHealth())
+        .append("\n");
+
+    // calculate total attack and defense including equipped items
+    int totalAttack = player.getBaseAttack();
+    int totalDefense = player.getBaseDefense();
+
+    // add bonuses from equipped items
+    for (var entry : player.getEquippedItems().entrySet()) {
+      String itemId = entry.getValue();
+      world
+          .findItem(itemId)
+          .ifPresent(
+              item -> {
+                // attack and defense are added via increaseBaseAttack/Defense methods when equipped
+              });
+    }
+
+    sb.append("Attack: ").append(totalAttack);
+    sb.append(" (Base: ").append(player.getBaseAttack()).append(")");
+    sb.append("\n");
+
+    sb.append("Defense: ").append(totalDefense);
+    sb.append(" (Base: ").append(player.getBaseDefense()).append(")");
+    sb.append("\n");
+
+    // Show equipped items
+    sb.append("\nEquipped Items:\n");
+    var equippedItems = player.getEquippedItems();
+    if (equippedItems.isEmpty()) {
+      sb.append("  None\n");
+    } else {
+      for (var entry : equippedItems.entrySet()) {
+        var slot = entry.getKey();
+        var itemId = entry.getValue();
+        world
+            .findItem(itemId)
+            .ifPresent(
+                item -> {
+                  sb.append("  ").append(slot).append(": ").append(item.getName());
+                  if (item.getAttackBonus() > 0 || item.getDefenseBonus() > 0) {
+                    sb.append(" (");
+                    if (item.getAttackBonus() > 0) {
+                      sb.append("+").append(item.getAttackBonus()).append(" ATK");
+                    }
+                    if (item.getDefenseBonus() > 0) {
+                      if (item.getAttackBonus() > 0) {
+                        sb.append(", ");
+                      }
+                      sb.append("+").append(item.getDefenseBonus()).append(" DEF");
+                    }
+                    sb.append(")");
+                  }
+                  sb.append("\n");
+                });
+      }
+    }
+
+    return CommandResult.success(sb.toString());
   }
 
   /* helpers */

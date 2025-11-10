@@ -150,4 +150,26 @@ public final class World {
         .filter(item -> item.getName().equalsIgnoreCase(itemName))
         .findFirst();
   }
+
+  /**
+   * Finds a monster by its ID.
+   *
+   * @param monsterId The ID of the monster to find.
+   * @return An Optional containing the Monster if found, or empty if not found.
+   */
+  public Optional<Monster> findMonster(String monsterId) {
+    return Optional.ofNullable(monstersById.get(monsterId));
+  }
+
+  /**
+   * Finds a monster by its name (case-insensitive).
+   *
+   * @param monsterName The name of the monster to find.
+   * @return An Optional containing the Monster if found, or empty if not found.
+   */
+  public Optional<Monster> findMonsterByName(String monsterName) {
+    return monstersById.values().stream()
+        .filter(monster -> monster.getName().equalsIgnoreCase(monsterName))
+        .findFirst();
+  }
 }
