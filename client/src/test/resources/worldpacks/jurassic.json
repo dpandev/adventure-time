@@ -1,0 +1,234 @@
+{
+  "version": "1.0",
+  "type": "world",
+  "id": "jurassic_park",
+  "name": "Jurassic Park",
+  "description": "A dinosaur-themed adventure set in the infamous Jurassic Park.",
+  "startRoomId": "visitor_center",
+  "items": [
+    { "id": "dino_egg", "name": "Dinosaur Egg", "description": "A large, leathery egg from a prehistoric creature.", "type": "QUEST"},
+    { "id": "tranquilizer_gun", "name": "Tranquilizer Gun", "description": "A rifle loaded with darts to sedate dinosaurs.", "type": "WEAPON", "attackBonus": 15 },
+    { "id": "key_card", "name": "Key Card", "description": "An electronic card to access restricted areas.", "type": "QUEST" },
+    { "id": "dna_sample", "name": "DNA Sample", "description": "A vial containing dinosaur genetic material.", "type": "QUEST" },
+    {
+      "id": "machete",
+      "name": "Machete",
+      "description": "A sharp blade for cutting through jungle foliage.",
+      "type": "WEAPON",
+      "attackBonus": 10
+    },
+    {
+      "id": "healing_spray",
+      "name": "Healing Spray",
+      "description": "A medical spray to restore health.",
+      "type": "CONSUMABLE",
+      "consumableType": "HEALTH_POTION",
+      "healthRestore": 30
+    },
+    {
+      "id": "flare_gun",
+      "name": "Flare Gun",
+      "description": "A gun that shoots bright flares for signaling.",
+      "type": "WEAPON",
+      "attackBonus": 5
+    },
+    {
+      "id": "compy_toy",
+      "name": "Compy Toy",
+      "description": "A small toy resembling a Compsognathus.",
+      "type": "MISCELLANEOUS"
+    },
+    {
+      "id": "fossil",
+      "name": "Fossil",
+      "description": "An ancient bone preserved in rock.",
+      "type": "QUEST"
+    },
+    {
+      "id": "jeep_keys",
+      "name": "Jeep Keys",
+      "description": "Keys to start a vehicle.",
+      "type": "QUEST"
+    }
+  ],
+  "monsters": [
+    {
+      "id": "t_rex",
+      "name": "Tyrannosaurus Rex",
+      "description": "A massive carnivorous dinosaur with powerful jaws.",
+      "maxHealth": 100,
+      "baseAttack": 25,
+      "baseDefense": 10,
+      "criticalHitThreshold": 0.2
+    },
+    {
+      "id": "velociraptor",
+      "name": "Velociraptor",
+      "description": "A swift, intelligent pack hunter.",
+      "maxHealth": 40,
+      "baseAttack": 15,
+      "baseDefense": 5,
+      "criticalHitThreshold": 0.3
+    },
+    {
+      "id": "triceratops",
+      "name": "Triceratops",
+      "description": "A large herbivore with three horns.",
+      "maxHealth": 80,
+      "baseAttack": 10,
+      "baseDefense": 15,
+      "criticalHitThreshold": 0.25
+    },
+    {
+      "id": "pteranodon",
+      "name": "Pteranodon",
+      "description": "A flying reptile with a crest.",
+      "maxHealth": 50,
+      "baseAttack": 12,
+      "baseDefense": 3,
+      "criticalHitThreshold": 0.35
+    },
+    {
+      "id": "dilophosaurus",
+      "name": "Dilophosaurus",
+      "description": "A venom-spitting dinosaur.",
+      "maxHealth": 30,
+      "baseAttack": 8,
+      "baseDefense": 2,
+      "criticalHitThreshold": 0.4
+    },
+    {
+      "id": "compy",
+      "name": "Compsognathus",
+      "description": "A small, swarming dinosaur.",
+      "maxHealth": 15,
+      "baseAttack": 3,
+      "baseDefense": 1,
+      "criticalHitThreshold": 0.5
+    }
+  ],
+  "rooms": [
+    {
+      "id": "visitor_center",
+      "name": "Visitor Center",
+      "description": "The main building of Jurassic Park, now eerily silent.",
+      "exits": {
+        "north": "main_road"
+      },
+      "itemIds": ["flare_gun", "healing_spray"]
+    },
+    {
+      "id": "main_road",
+      "name": "Main Road",
+      "description": "A paved road leading through the park, overgrown with vegetation.",
+      "exits": {
+        "south": "visitor_center",
+        "north": "jungle_path",
+        "east": "control_room",
+        "west": "t_rex_paddock"
+      },
+      "itemIds": ["machete"]
+    },
+    {
+      "id": "t_rex_paddock",
+      "name": "T-Rex Paddock",
+      "description": "An enclosure for the mighty Tyrannosaurus Rex.",
+      "exits": {
+        "east": "main_road"
+      },
+      "monsterId": "t_rex",
+      "itemIds": ["dino_egg"]
+    },
+    {
+      "id": "control_room",
+      "name": "Control Room",
+      "description": "The nerve center of the park, with computers and monitors.",
+      "exits": {
+        "west": "main_road",
+        "north": "lab"
+      },
+      "puzzles": [
+        {
+          "id": "security_code",
+          "type": "RIDDLE",
+          "prompt": "What has a head, a tail, is brown, and has no legs?",
+          "answer": "penny",
+          "rewardItemId": "key_card",
+          "maxAttempts": 3
+        }
+      ]
+    },
+    {
+      "id": "lab",
+      "name": "Laboratory",
+      "description": "A high-tech lab where dinosaurs were cloned.",
+      "exits": {
+        "south": "control_room"
+      },
+      "itemIds": ["dna_sample", "healing_spray"],
+      "monsterId": "compy"
+    },
+    {
+      "id": "jungle_path",
+      "name": "Jungle Path",
+      "description": "A narrow path through dense jungle foliage.",
+      "exits": {
+        "south": "main_road",
+        "north": "raptor_paddock",
+        "east": "triceratops_enclosure"
+      },
+      "monsterId": "dilophosaurus"
+    },
+    {
+      "id": "raptor_paddock",
+      "name": "Raptor Paddock",
+      "description": "An enclosure for the clever Velociraptors.",
+      "exits": {
+        "south": "jungle_path"
+      },
+      "monsterId": "velociraptor",
+      "itemIds": ["fossil"]
+    },
+    {
+      "id": "triceratops_enclosure",
+      "name": "Triceratops Enclosure",
+      "description": "A large field for the herbivorous Triceratops.",
+      "exits": {
+        "west": "jungle_path",
+        "north": "aviary"
+      },
+      "monsterId": "triceratops",
+      "itemIds": ["compy_toy"]
+    },
+    {
+      "id": "aviary",
+      "name": "Pteranodon Aviary",
+      "description": "An open aviary for flying reptiles.",
+      "exits": {
+        "south": "triceratops_enclosure",
+        "east": "lagoon"
+      },
+      "monsterId": "pteranodon",
+      "itemIds": ["jeep_keys"]
+    },
+    {
+      "id": "lagoon",
+      "name": "Mosquito Lagoon",
+      "description": "A swampy area where mosquitoes carry ancient DNA.",
+      "exits": {
+        "west": "aviary"
+      },
+      "puzzles": [
+        {
+          "id": "dna_puzzle",
+          "type": "RIDDLE",
+          "prompt": "I am not alive, but I grow; I don't have lungs, but I need air; I don't have a mouth, but water kills me. What am I?",
+          "answer": "fire",
+          "rewardItemId": "dna_sample",
+          "maxAttempts": 3
+        }
+      ]
+    }
+  ]
+}
+
