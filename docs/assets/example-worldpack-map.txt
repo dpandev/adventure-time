@@ -1,0 +1,155 @@
+╔═══════════════════════════════════════════════════════════════════════════════════════════════════════════╗
+║                                  MAIN WORLD - FROZEN REALM MAP                                            ║
+╚═══════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+
+Legend:
+  [ROOM NAME]           = Room
+  ⚔ Monster Name        = Monster encounter
+  ⚙ Puzzle              = Puzzle/Riddle
+  • Item Name           = Item(s) available
+  ═══, ║                = Connections between rooms
+
+
+                                    ┌─────────────────────────────┐
+                                    │      [ICE BRIDGE]           │
+                                    │  • Greater Healing Potion   │
+                                    └──────────────┬──────────────┘
+                                                   │
+                                                   │
+                    ┌──────────────────────────────┴──────────────────────────────┐
+                    │                                                             │
+    ┌───────────────┴────────────────┐                        ┌──────────────────┴─────────────────┐
+    │  [GLACIER DEPTHS]              │                        │  [FROZEN LAKE]                     │
+    │  ⚔ Frozen Guardian             │                        │  ⚔ Snow Wolf                       │
+    │  • Frozen Leggings             │                        │  • Icicle Spear                    │
+    │  • Healing Potion              │                        │  • Winter Boots                    │
+    └────────────┬───────────────────┘                        └────────────────────────────────────┘
+                 │                                                              │
+                 │                                                              │
+    ┌────────────┴────────────────┐                           ┌─────────────────┴──────────────────┐
+    │  [FROST THRONE ROOM]        │                           │  [ICE CAVERN]                      │
+    │  ⚔ Glacier Golem            │                           │  ⚙ Echo Riddle                     │
+    │  • Glacier Orb              │◄──────────────────────────┤     → Healing Potion               │
+    └────────────┬────────────────┘                           │  • Healing Potion                  │
+                 │                                             └─────────────────┬──────────────────┘
+                 │                                                               │
+    ┌────────────┴────────────────┐                                             │
+    │  [FROZEN LIBRARY]           │                           ┌─────────────────┴──────────────────┐
+    │  ⚔ Ice Wraith               │                           │  [CRYSTAL HALL]                    │
+    │  • Frost Sigil              │◄──────────────────────────┤  ⚔ Ice Troll                       │
+    │  • Ice Crystal              │                           │  • Ice Shard                       │
+    └─────────────────────────────┘                           └─────────────────┬──────────────────┘
+                                                                                │
+                                                              ┌─────────────────┼──────────────────┐
+                                                              │                 │                  │
+                                                ┌─────────────┴─────────┐       │       ┌──────────┴──────────────┐
+                                                │  [CHAMBER OF SECRETS] │       │       │  [FROZEN GATE] (START)  │
+                                                │  ⚔ Frost Sprite       │       │       │  • Mystic Key           │
+                                                │  • Ancient Scroll     │       │       │  • Steel Sword          │
+                                                │  • Healing Potion     │       │       │  • Iron Helmet          │
+                                                └──────────┬────────────┘       │       └─────────────────────────┘
+                                                           │                    │
+                                                           │                    │
+                                                ┌──────────┴─────────────┐      │
+                                                │  [TREASURE VAULT]      │      │
+                                                │  ⚙ Fire Riddle         │      │
+                                                │     → Frozen Crown     │      │
+                                                │  • Frostbite Blade     │      │
+                                                │  • Ice Plate Armor     │      │
+                                                │  • Frost Helm          │      │
+                                                │  • Greater Heal Potion │      │
+                                                └────────────────────────┘      │
+
+
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+ROOM DETAILS:
+
+┌─ FROZEN GATE (entrance) ─ START ──────────────────────────────────────────────────────────────────────── ─┐
+│ "An icy archway looms ahead. The cold air bites at your skin."                                            │
+│ Exits: North → Crystal Hall                                                                               │
+│ Items: Mystic Key, Steel Sword, Iron Helmet                                                               │
+└───────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+┌─ CRYSTAL HALL (hall) ─────────────────────────────────────────────────────────────────────────────────── ─┐
+│ "A vast hall where crystalline shards glitter underfoot. Light refracts in dazzling patterns."            │
+│ Exits: South → Frozen Gate | East → Chamber of Secrets | North → Ice Cavern | West → Frozen Library       │
+│ Monster: Ice Troll (HP:50, ATK:90, DEF:5)                                                                 │
+│ Items: Ice Shard                                                                                          │
+└───────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+┌─ CHAMBER OF SECRETS (chamber) ───────────────────────────────────────────────────────────────────────── ──┐
+│ "A hidden room filled with ancient knowledge and forgotten lore."                                         │
+│ Exits: West → Crystal Hall | North → Treasure Vault                                                       │
+│ Monster: Frost Sprite (HP:20, ATK:4, DEF:2)                                                               │
+│ Items: Ancient Scroll, Healing Potion                                                                     │
+└───────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+┌─ ICE CAVERN (ice_cavern) ────────────────────────────────────────────────────────────────────────────── ──┐
+│ "A dark cavern with walls of solid ice. Your breath creates clouds in the frigid air."                    │
+│ Exits: South → Crystal Hall | West → Frozen Lake | North → Glacier Depths                                 │
+│ Puzzle: RIDDLE - "I speak without a mouth and hear without ears. What am I?" (Answer: echo)               │
+│         Reward: Healing Potion                                                                            │
+│ Items: Healing Potion                                                                                     │
+└───────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+┌─ FROZEN LIBRARY (frozen_library) ────────────────────────────────────────────────────────────────────── ──┐
+│ "Ancient tomes frozen in ice line the walls. Knowledge preserved for eternity."                           │
+│ Exits: East → Crystal Hall | North → Frost Throne Room                                                    │
+│ Monster: Ice Wraith (HP:40, ATK:14, DEF:4)                                                                │
+│ Items: Frost Sigil, Ice Crystal                                                                           │
+└───────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+┌─ FROZEN LAKE (frozen_lake) ───────────────────────────────────────────────────────────────────────────── ─┐
+│ "A vast expanse of perfectly smooth ice stretches before you. Something moves beneath the surface."       │
+│ Exits: East → Ice Cavern | North → Ice Bridge                                                             │
+│ Monster: Snow Wolf (HP:35, ATK:10, DEF:3)                                                                 │
+│ Items: Icicle Spear, Winter Boots                                                                         │
+└───────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+┌─ TREASURE VAULT (treasure_vault) ────────────────────────────────────────────────────────────────────── ──┐
+│ "A room filled with frozen treasures from a bygone era. Riches beyond imagination."                       │
+│ Exits: South → Chamber of Secrets                                                                         │
+│ Puzzle: RIDDLE - "I am always hungry and must always be fed. The finger I touch will soon turn red.       │
+│                   What am I?" (Answer: fire)                                                              │
+│         Reward: Frozen Crown                                                                              │
+│ Items: Frostbite Blade, Ice Plate Armor, Frost Helm, Greater Healing Potion                               │
+└───────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+┌─ GLACIER DEPTHS (glacier_depths) ────────────────────────────────────────────────────────────────────────┐
+│ "Deep within the glacier, ancient ice formations create a maze of frozen corridors."                     │
+│ Exits: South → Ice Cavern | East → Frost Throne Room                                                     │
+│ Monster: Frozen Guardian (HP:70, ATK:16, DEF:8)                                                          │
+│ Items: Frozen Leggings, Healing Potion                                                                   │
+└──────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+┌─ FROST THRONE ROOM (frost_throne) ───────────────────────────────────────────────────────────────────────┐
+│ "A magnificent throne carved from a single massive glacier dominates the chamber.                        │
+│  This is the heart of the frozen realm."                                                                 │
+│ Exits: South → Frozen Library | West → Glacier Depths                                                    │
+│ Monster: Glacier Golem (HP:90, ATK:20, DEF:12) - BOSS                                                    │
+│ Items: Glacier Orb                                                                                       │
+└──────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+┌─ ICE BRIDGE (ice_bridge) ────────────────────────────────────────────────────────────────────────────────┐
+│ "A narrow bridge of ice spans a bottomless chasm. One wrong step could be your last."                    │
+│ Exits: South → Frozen Lake                                                                               │
+│ Items: Greater Healing Potion                                                                            │
+└──────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+GAMEPLAY TIPS:
+
+• START: Begin at Frozen Gate (entrance) with basic equipment
+• PROGRESSION: Explore south-to-north, west-to-east for difficulty progression
+• KEY BATTLES:
+  - Ice Troll (Crystal Hall) - First major obstacle
+  - Frozen Guardian (Glacier Depths) - Mid-game challenge
+  - Glacier Golem (Frost Throne) - Final boss encounter
+• BEST LOOT: Treasure Vault (requires solving fire riddle for Frozen Crown)
+• HEALING: Multiple healing potions scattered throughout, solve echo riddle for extra
+• DEAD END: Ice Bridge is a dead-end with healing potion (risk vs reward)
+
+═══════════════════════════════════════════════════════════════════════════════════════════════════════════
+
