@@ -9,6 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.UUID;
@@ -71,9 +72,36 @@ public final class FileSaveRepository implements SaveRepository {
       String playerName = p.getProperty("playerName");
       String roomId = p.getProperty("roomId");
       List<String> itemIds = parseItemIds(p.getProperty("itemIds"));
+      Map<String, String> equippedItems = parseEquippedItems(p.getProperty("equippedItems"));
+
+      // Parse player stats with defaults for backward compatibility
+      int score = Integer.parseInt(p.getProperty("score", "0"));
+      int currentHealth = Integer.parseInt(p.getProperty("currentHealth", "100"));
+      int maxHealth = Integer.parseInt(p.getProperty("maxHealth", "100"));
+      int baseAttack = Integer.parseInt(p.getProperty("baseAttack", "10"));
+      int baseDefense = Integer.parseInt(p.getProperty("baseDefense", "0"));
+
+      List<String> puzzlesSolved = parseItemIds(p.getProperty("puzzlesSolved"));
+      List<String> roomsVisited = parseItemIds(p.getProperty("roomsVisited"));
+
       Instant savedAt = Instant.parse(p.getProperty("savedAt"));
 
-      return Optional.of(new SaveData(worldVersion, uuid, playerName, roomId, itemIds, savedAt));
+      return Optional.of(
+          new SaveData(
+              worldVersion,
+              uuid,
+              playerName,
+              roomId,
+              itemIds,
+              equippedItems,
+              score,
+              currentHealth,
+              maxHealth,
+              baseAttack,
+              baseDefense,
+              puzzlesSolved,
+              roomsVisited,
+              savedAt));
     } catch (Exception e) {
       //      throw new RuntimeException("Failed to parse save data for player ID: " + id, e);
       return Optional.empty();
@@ -93,6 +121,26 @@ public final class FileSaveRepository implements SaveRepository {
     p.setProperty("playerName", data.playerName());
     p.setProperty("roomId", data.roomId());
     p.setProperty("itemIds", String.join(",", data.itemIds()));
+
+    // Save equipped items as "SLOT:itemId" pairs
+    StringBuilder equippedBuilder = new StringBuilder();
+    data.equippedItems()
+        .forEach(
+            (slot, itemId) -> {
+              if (equippedBuilder.length() > 0) {
+                equippedBuilder.append(",");
+              }
+              equippedBuilder.append(slot).append(":").append(itemId);
+            });
+    p.setProperty("equippedItems", equippedBuilder.toString());
+
+    p.setProperty("score", String.valueOf(data.score()));
+    p.setProperty("currentHealth", String.valueOf(data.currentHealth()));
+    p.setProperty("maxHealth", String.valueOf(data.maxHealth()));
+    p.setProperty("baseAttack", String.valueOf(data.baseAttack()));
+    p.setProperty("baseDefense", String.valueOf(data.baseDefense()));
+    p.setProperty("puzzlesSolved", String.join(",", data.puzzlesSolved()));
+    p.setProperty("roomsVisited", String.join(",", data.roomsVisited()));
     p.setProperty("savedAt", data.savedAt().toString());
 
     Path file = fileFor(data.playerId());
@@ -117,5 +165,27 @@ public final class FileSaveRepository implements SaveRepository {
     }
     String[] parts = itemIdsStr.split(",");
     return List.of(parts);
+  }
+
+  /**
+   * Parses equipped items from "SLOT:itemId,SLOT:itemId" format.
+   *
+   * @param equippedStr the equipped items string
+   * @return a map of slot name to item ID
+   */
+  private static Map<String, String> parseEquippedItems(String equippedStr) {
+    if (equippedStr == null || equippedStr.isBlank()) {
+      return Map.of();
+    }
+
+    Map<String, String> result = new java.util.HashMap<>();
+    String[] pairs = equippedStr.split(",");
+    for (String pair : pairs) {
+      String[] parts = pair.split(":");
+      if (parts.length == 2) {
+        result.put(parts[0], parts[1]);
+      }
+    }
+    return result;
   }
 }

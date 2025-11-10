@@ -6,7 +6,7 @@ import java.util.UUID;
 public abstract class Character {
   private final UUID id = UUID.randomUUID();
   private String name;
-  private final int maxHealth;
+  private int maxHealth;
   private int currentHealth;
   private int baseAttack = 0;
   private int baseDefense = 0;
@@ -77,5 +77,41 @@ public abstract class Character {
 
   public void decreaseBaseAttack(int amount) {
     this.baseAttack = Math.max(0, this.baseAttack - amount);
+  }
+
+  /**
+   * Sets the current health.
+   *
+   * @param health the health value to set
+   */
+  public void setCurrentHealth(int health) {
+    this.currentHealth = Math.max(0, Math.min(health, maxHealth));
+  }
+
+  /**
+   * Sets the maximum health.
+   *
+   * @param health the maximum health value to set
+   */
+  public void setMaxHealth(int health) {
+    this.maxHealth = Math.max(1, health);
+  }
+
+  /**
+   * Sets the base attack.
+   *
+   * @param attack the base attack value to set
+   */
+  public void setBaseAttack(int attack) {
+    this.baseAttack = Math.max(0, attack);
+  }
+
+  /**
+   * Sets the base defense.
+   *
+   * @param defense the base defense value to set
+   */
+  public void setBaseDefense(int defense) {
+    this.baseDefense = Math.max(0, defense);
   }
 }

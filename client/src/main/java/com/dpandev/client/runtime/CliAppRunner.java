@@ -5,7 +5,6 @@ import com.dpandev.client.view.ConsoleView;
 import com.dpandev.domain.command.CommandParser;
 import com.dpandev.domain.service.CommandResult;
 import com.dpandev.domain.service.ExplorationService;
-import com.dpandev.domain.service.SaveService;
 import com.dpandev.domain.utils.CommandToken;
 import com.dpandev.domain.utils.GameContext;
 import com.dpandev.domain.utils.Verb;
@@ -15,7 +14,6 @@ public final class CliAppRunner {
   private final ConsoleView view;
   private final CommandParser parser;
   private final FrontController frontController;
-  private final SaveService saveService;
   private final ExplorationService explorationService;
   private final GameContext ctx;
 
@@ -23,13 +21,11 @@ public final class CliAppRunner {
       ConsoleView view,
       CommandParser parser,
       FrontController frontController,
-      SaveService saveService,
       ExplorationService explorationService,
       GameContext ctx) {
     this.view = view;
     this.parser = parser;
     this.frontController = frontController;
-    this.saveService = saveService;
     this.explorationService = explorationService;
     this.ctx = ctx;
   }
@@ -39,7 +35,12 @@ public final class CliAppRunner {
     view.println("Type 'help' for commands, 'quit' to exit.");
     view.println("");
 
-    showCurrentRoom();
+    // show initial room description
+    CommandResult roomDesc = explorationService.describeCurrentRoom(ctx);
+    if (roomDesc != null && !roomDesc.message().isBlank()) {
+      view.println(roomDesc.message());
+      view.println("");
+    }
 
     while (true) {
       view.printf("> ");
@@ -47,7 +48,7 @@ public final class CliAppRunner {
       try {
         line = view.readLine();
       } catch (Exception e) {
-        saveAndExit("Error reading input. Exiting.");
+        view.println("Error reading input. Exiting.");
         return;
       }
 
@@ -69,29 +70,10 @@ public final class CliAppRunner {
         view.println(result.message());
       }
 
-      // TODO remove; this can be handled in the system controller or setup as a shutdown hook
-      if (cmd.verb() == Verb.QUIT) {
-        saveAndExit("Game saved.");
+      // check if the command is for game exit/quit
+      if (result != null && result.shouldExit()) {
         return;
       }
-    }
-  }
-
-  private void saveAndExit(String message) {
-    try {
-      saveService.saveData(ctx);
-    } catch (Exception e) {
-      view.println(e.getMessage());
-    }
-    view.println(message);
-  }
-
-  /** Display the current room's name, description, and exits. */
-  private void showCurrentRoom() {
-    CommandResult result = explorationService.describeCurrentRoom(ctx);
-    if (result != null && !result.message().isBlank()) {
-      view.println(result.message());
-      view.println("");
     }
   }
 }
