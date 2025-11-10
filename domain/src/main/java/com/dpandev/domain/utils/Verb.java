@@ -4,6 +4,7 @@ package com.dpandev.domain.utils;
 public enum Verb {
   GO,
   LOOK,
+  MAP,
   INSPECT,
   PICKUP,
   DROP,

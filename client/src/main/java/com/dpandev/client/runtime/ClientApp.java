@@ -17,9 +17,11 @@ import com.dpandev.domain.service.DefaultCombatService;
 import com.dpandev.domain.service.DefaultExplorationService;
 import com.dpandev.domain.service.DefaultInteractionService;
 import com.dpandev.domain.service.DefaultInventoryService;
+import com.dpandev.domain.service.DefaultMapService;
 import com.dpandev.domain.service.ExplorationService;
 import com.dpandev.domain.service.InteractionService;
 import com.dpandev.domain.service.InventoryService;
+import com.dpandev.domain.service.MapService;
 import com.dpandev.domain.service.SaveService;
 import com.dpandev.domain.utils.GameContext;
 import com.dpandev.domain.utils.VerbCategory;
@@ -45,11 +47,12 @@ public final class ClientApp {
     ExplorationService explorationService = new DefaultExplorationService(interactionService);
     InventoryService inventoryService = new DefaultInventoryService();
     CombatService combatService = new DefaultCombatService();
+    MapService mapService = new DefaultMapService();
     var saveDirectory = Path.of("saves");
     SaveService saveService = new SaveService(new FileSaveRepository(saveDirectory));
 
     // init controllers here
-    CommandController movementController = new MovementController(explorationService);
+    CommandController movementController = new MovementController(explorationService, mapService);
     CommandController inventoryController = new InventoryController(inventoryService);
     CommandController interactionController = new InteractionController(interactionService);
     CommandController combatController = new CombatController(combatService);

@@ -117,6 +117,7 @@ public class SimpleCommandParser implements CommandParser {
     verbMap.put("?", Verb.HELP);
     verbMap.put("look", Verb.LOOK);
     verbMap.put("l", Verb.LOOK);
+    verbMap.put("map", Verb.MAP);
     verbMap.put("inspect", Verb.INSPECT);
     verbMap.put("examine", Verb.INSPECT);
     verbMap.put("go", Verb.GO);

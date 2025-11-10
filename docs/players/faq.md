@@ -113,7 +113,7 @@ No, defeated or ignored monsters do not respawn.
 - `up` (u), `down` (d)
 
 ### Can I see a map?
-Not currently. Use the `look` command to see available exits from each room.
+Yes! Use the `map` command to see your current location and all adjacent rooms with their connecting exits. The map shows a visual representation of nearby areas.
 
 ### I'm stuck in a room with no exits!
 This shouldn't happen. All rooms should have at least one exit. If this occurs, it may be a bug - please report it.

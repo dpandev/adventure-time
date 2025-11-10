@@ -29,6 +29,7 @@ public class SystemController implements CommandController {
           CommandResult.success(
               "Available commands:\n"
                   + "  look - Look around the room\n"
+                  + "  map - Display a map of nearby rooms\n"
                   + "  go <dir> - Move in a direction (north, south, east, west, up, down)\n"
                   + "  inventory (i) - View your inventory\n"
                   + "  pickup <item> - Pick up an item\n"
