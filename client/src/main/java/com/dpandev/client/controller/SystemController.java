@@ -36,7 +36,10 @@ public class SystemController implements CommandController {
         }
         yield save.applySave(ctx, loadedCtx.get()); // this also returns CommandResult
       }
-      case QUIT -> CommandResult.success("Quitting the game. Goodbye!");
+      case QUIT -> {
+        save.saveData(ctx);
+        yield CommandResult.exit("Game saved. Goodbye!");
+      }
       default -> CommandResult.fail("Unknown command: " + cmd.verb());
     };
   }

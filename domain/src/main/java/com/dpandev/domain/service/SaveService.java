@@ -4,6 +4,7 @@ import com.dpandev.domain.spi.SaveRepository;
 import com.dpandev.domain.utils.GameContext;
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -30,6 +31,10 @@ public final class SaveService {
     var world = ctx.world();
     var player = ctx.player();
 
+    // Convert EquipmentSlot enum to String for serialization
+    Map<String, String> equippedItemsMap = new java.util.HashMap<>();
+    player.getEquippedItems().forEach((slot, itemId) -> equippedItemsMap.put(slot.name(), itemId));
+
     SaveData data =
         new SaveData(
             world.getVersion(),
@@ -37,6 +42,14 @@ public final class SaveService {
             player.getName(),
             player.getRoomId(),
             List.copyOf(player.getInventoryItemIds()),
+            equippedItemsMap,
+            player.getScore(),
+            player.getCurrentHealth(),
+            player.getMaxHealth(),
+            player.getBaseAttack(),
+            player.getBaseDefense(),
+            List.copyOf(player.getPuzzlesSolved()),
+            List.copyOf(player.getRoomsVisited()),
             Instant.now());
 
     repo.upsert(data); // save or update the save data if exists
@@ -75,8 +88,40 @@ public final class SaveService {
     // apply save data to player but keep the current player uuid
     player.setName(data.playerName());
     player.setRoomId(data.roomId());
+
+    // restore inventory
     player.getInventoryItemIds().clear();
     player.getInventoryItemIds().addAll(data.itemIds());
+
+    // restore equipped items
+    player.getEquippedItems().clear();
+    data.equippedItems()
+        .forEach(
+            (slotName, itemId) -> {
+              try {
+                var slot = com.dpandev.domain.model.Player.EquipmentSlot.valueOf(slotName);
+                player.equipItem(slot, itemId);
+              } catch (IllegalArgumentException e) {
+                // skip invalid slot names (in case save data is corrupted)
+              }
+            });
+
+    // restore score
+    player.increaseScore(data.score() - player.getScore());
+
+    // restore health and stats
+    player.setCurrentHealth(data.currentHealth());
+    player.setMaxHealth(data.maxHealth());
+    player.setBaseAttack(data.baseAttack());
+    player.setBaseDefense(data.baseDefense());
+
+    // restore puzzles solved
+    player.getPuzzlesSolved().clear();
+    player.getPuzzlesSolved().addAll(data.puzzlesSolved());
+
+    // restore rooms visited
+    player.getRoomsVisited().clear();
+    player.getRoomsVisited().addAll(data.roomsVisited());
 
     return CommandResult.success(
         "Game loaded successfully. You are now in room " + data.roomId() + ".");

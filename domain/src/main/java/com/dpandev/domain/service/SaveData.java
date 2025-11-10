@@ -2,13 +2,39 @@ package com.dpandev.domain.service;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
-/** Represents the saved data of a player's game state. */
+/**
+ * Represents the saved data of a player's game state.
+ *
+ * @param worldVersion the version of the world
+ * @param playerId the unique ID of the player
+ * @param playerName the name of the player
+ * @param roomId the current room ID
+ * @param itemIds the list of items in inventory
+ * @param equippedItems map of equipment slot to item ID
+ * @param score the player's current score
+ * @param currentHealth the player's current health
+ * @param maxHealth the player's maximum health
+ * @param baseAttack the player's base attack stat
+ * @param baseDefense the player's base defense stat
+ * @param puzzlesSolved list of puzzle IDs the player has solved
+ * @param roomsVisited list of room IDs the player has visited
+ * @param savedAt the timestamp when the game was saved
+ */
 public record SaveData(
     String worldVersion,
     UUID playerId,
     String playerName,
     String roomId,
     List<String> itemIds,
+    Map<String, String> equippedItems,
+    int score,
+    int currentHealth,
+    int maxHealth,
+    int baseAttack,
+    int baseDefense,
+    List<String> puzzlesSolved,
+    List<String> roomsVisited,
     Instant savedAt) {}
