@@ -135,6 +135,9 @@ public class SimpleCommandParser implements CommandParser {
     verbMap.put("consume", Verb.HEAL);
     verbMap.put("solve", Verb.SOLVE);
     verbMap.put("answer", Verb.SOLVE);
+    verbMap.put("stats", Verb.STATS);
+    verbMap.put("status", Verb.STATS);
+    verbMap.put("health", Verb.STATS);
     verbMap.put("quit", Verb.QUIT);
     verbMap.put("save", Verb.SAVE);
     verbMap.put("load", Verb.LOAD);

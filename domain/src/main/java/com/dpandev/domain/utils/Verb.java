@@ -13,6 +13,7 @@ public enum Verb {
   UNEQUIP,
   HEAL,
   SOLVE,
+  STATS,
   HELP,
   SAVE,
   QUIT,

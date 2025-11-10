@@ -30,4 +30,12 @@ public interface ExplorationService {
    * @return the result containing the room description
    */
   CommandResult describeCurrentRoom(GameContext ctx);
+
+  /**
+   * Show the player's current stats including health, attack, and defense.
+   *
+   * @param ctx the game context
+   * @return the result containing the player stats
+   */
+  CommandResult showStats(GameContext ctx);
 }
