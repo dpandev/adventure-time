@@ -171,6 +171,12 @@ public final class DefaultInventoryService implements InventoryService {
     // Check if item is in player's inventory
     Optional<Item> itemOpt = findItemInPlayerInventory(ctx, userInput);
     if (itemOpt.isEmpty()) {
+      // Check if the item is equipped instead
+      Optional<Item> equippedItemOpt = findEquippedItem(ctx, userInput);
+      if (equippedItemOpt.isPresent()) {
+        return CommandResult.fail(
+            "You need to unequip the " + equippedItemOpt.get().getName() + " first.");
+      }
       return CommandResult.fail("You don't have a " + userInput + " to drop.");
     }
 
@@ -226,7 +232,14 @@ public final class DefaultInventoryService implements InventoryService {
       return CommandResult.success(formatItemDescription(item));
     }
 
-    // If not in inventory, check if in the current room
+    // Check if the item is equipped
+    Optional<Item> equippedItemOpt = findEquippedItem(ctx, userInput);
+    if (equippedItemOpt.isPresent()) {
+      Item item = equippedItemOpt.get();
+      return CommandResult.success(formatItemDescription(item) + "\n(Currently equipped)");
+    }
+
+    // If not in inventory or equipped, check if in the current room
     Optional<Item> roomItemOpt = findItemInCurrentRoom(ctx, userInput);
     if (roomItemOpt.isPresent()) {
       Item item = roomItemOpt.get();
