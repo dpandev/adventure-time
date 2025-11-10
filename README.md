@@ -1,13 +1,52 @@
 # Adventure Time
 
-A multi-player co-op adventure game that features map exploration, puzzles/quests, and a rich story plot. The game utilizes an MVC architecture - separating the data from the game logic - allowing 'hot-swappable' game content.
+A co-op adventure game that features map exploration, puzzles/quests, and a rich story plot. The game utilizes an MVC architecture - separating the data from the game logic - allowing 'hot-swappable' game content.
 
-**Stack**: Java 21 (Temurin), Gradle 8.x, Spring Boot 3.5.x (server), H2 (dev), Postgres (prod), Flyway, Testcontainers, JUnit 5.
+**Stack**: Java 21 (Temurin), Gradle 8.x, Spring Boot 3.5.x (server), JUnit 5.
+
+**Planned**: H2 (dev db), Postgres (prod db), Flyway, Testcontainers.
+
+---
+
+## Architecture Overview
+
+```
+:domain
+  com.dpandev.domain
+  model/           // Pure state: Player, Room, Item, Puzzle, Monster, etc.
+  world/           // World definitions + loader
+  command/         // Command objects, parser, handlers
+  service/         // Movement, inventory, inspect/look, save API, etc.
+  spi/             // Interfaces for client/server implementations
+  util/            // ID types, small helpers
+
+:client
+    com.dpandev.client
+    controller/      // Command controllers
+    persistence/     // File-based implementation of SaveRepository
+    runtime/         // Game loop, session
+      ClientApp.java  // Main entry point
+    view/            // Console view rendering
+  resource/
+    worldpacks/     // World content packs (JSON)
+
+:server           # builds, but not yet implemented
+  com.dpandev.server
+  config/         // Spring configuration
+  controller/     // REST & WebSocket controllers
+  service/        // Save management, auth, user management
+  repository/     // Postgres repositories
+```
+
+## Gameplay Scenario Screenshots
+View [Gameplay Scenario Screenshots](docs/assets/scenario-screenshots/)
+View [Example Worldpack Map](docs/assets/example-worldpack-map.txt)
+View [Gameplay Demo Video](~~link~~)
 
 ---
 
 ## UML Diagram
-[UML Diagram Link](https://drive.google.com/file/d/1-DTjbgjPbhBIcD-TMBt5lK5gtYeajm4L/view?usp=drive_link)
+[UML Diagram Link](https://drive.google.com/file/d/1-DTjbgjPbhBIcD-TMBt5lK5gtYeajm4L/view?usp=drive_link) (needs update for latest version)
 
 ---
 
@@ -25,6 +64,13 @@ A multi-player co-op adventure game that features map exploration, puzzles/quest
 ---
 
 ## Quick Start
+
+### Load Frozen World (Default Example Worldpack)
+```bash
+./gradlew :client:run --args="--world=example" # can change to other if the .json exists (client/src/main/resources/worldpacks/)
+# Or just:
+./gradlew :client:run
+```
 
 ### For Players
 
@@ -44,9 +90,7 @@ Want to play the game? Start here:
 
 ---
 
-### For Developers
-
-Want to contribute or modify the game?
+### For Development
 
 **1. Setup your environment:**
 - Generate the wrapper: `gradle wrapper --gradle-version 8.14.3`
@@ -78,10 +122,10 @@ Want to contribute or modify the game?
 
 ### Developer Documentation
 - [Developer Setup](docs/dev/dev-setup.md) - Environment setup and installation
-- [Architecture Overview](docs/dev/architecture.md) - System design and structure
+- ~~[Architecture Overview](docs/dev/architecture.md) - System design and structure~~ (to be updated)
+- [API Documentation](docs/dev/api/) - Code reference for modules and classes
 - [Testing Guide](docs/dev/testing.md) - Testing strategies and examples
 - [Runbook](docs/dev/runbook.md) - Operations and deployment
-- [ADR (Architecture Decision Records)](docs/dev/adr/) - Design decisions
 
 ### Admin Documentation
 - [Content Packs Guide](docs/admin/content-packs.md) - Create custom worlds and content

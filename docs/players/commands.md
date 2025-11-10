@@ -37,6 +37,33 @@ Move to an adjacent room in the specified direction.
 > s
 ```
 
+### `map`
+Display a visual map showing your current location and all adjacent rooms with their connecting exits.
+
+**Example:**
+```
+> map
+
+╔════════════════════════════════════════════╗
+║                  AREA MAP                  ║
+╠════════════════════════════════════════════╣
+
+                    ↑ NORTH
+              Frozen Library
+                    |
+Ice Cave        ← [ Ice Throne Room ] →      Frozen Lake
+                    |
+              Glacier Depths
+                    ↓ SOUTH
+
+╚════════════════════════════════════════════╝
+
+  [ ] = Current Location
+  Available exits: east, north, south, west
+```
+
+**Note:** The map shows rooms directly connected to your current location. Your current room is highlighted with brackets `[ ]`.
+
 ---
 
 ## Inventory Commands
@@ -276,6 +303,7 @@ Save your game and exit.
 
 ### Exploration
 - **Use `look` often** - The game state changes as you play
+- **Check your `map`** - Get oriented and see where you can go
 - **Save regularly** - Don't lose progress!
 - **Read descriptions** - They often contain hints
 

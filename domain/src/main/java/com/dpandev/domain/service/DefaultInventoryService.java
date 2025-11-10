@@ -171,6 +171,12 @@ public final class DefaultInventoryService implements InventoryService {
     // Check if item is in player's inventory
     Optional<Item> itemOpt = findItemInPlayerInventory(ctx, userInput);
     if (itemOpt.isEmpty()) {
+      // Check if the item is equipped instead
+      Optional<Item> equippedItemOpt = findEquippedItem(ctx, userInput);
+      if (equippedItemOpt.isPresent()) {
+        return CommandResult.fail(
+            "You need to unequip the " + equippedItemOpt.get().getName() + " first.");
+      }
       return CommandResult.fail("You don't have a " + userInput + " to drop.");
     }
 
@@ -195,8 +201,25 @@ public final class DefaultInventoryService implements InventoryService {
     Optional<Item> inventoryItemOpt = findItemInPlayerInventory(ctx, userInput);
     if (inventoryItemOpt.isPresent()) {
       Item item = inventoryItemOpt.get();
-      // Handle inventory item usage (potion, key, etc.)
-      return CommandResult.success("You use the " + item.getName() + ".");
+
+      // handle consumables
+      if (item.getItemType() == Item.ItemType.CONSUMABLE) {
+        if (item.getConsumableType() == Item.ConsumableType.HEALTH_POTION) {
+          // delegate to heal method
+          return heal(ctx, userInput);
+        } else {
+          return CommandResult.fail("You don't know how to use the " + item.getName() + " yet.");
+        }
+      }
+
+      // handle equippable items
+      if (item.getItemType() == Item.ItemType.WEAPON || item.getItemType() == Item.ItemType.ARMOR) {
+        return CommandResult.fail(
+            "You need to equip the " + item.getName() + " instead of using it.");
+      }
+
+      // handle quest items or other misc items
+      return CommandResult.fail("You can't use the " + item.getName() + " right now.");
     }
 
     // If not in inventory, check if it's a fixture in the current room(e.g.,lever)
@@ -226,7 +249,14 @@ public final class DefaultInventoryService implements InventoryService {
       return CommandResult.success(formatItemDescription(item));
     }
 
-    // If not in inventory, check if in the current room
+    // Check if the item is equipped
+    Optional<Item> equippedItemOpt = findEquippedItem(ctx, userInput);
+    if (equippedItemOpt.isPresent()) {
+      Item item = equippedItemOpt.get();
+      return CommandResult.success(formatItemDescription(item) + "\n(Currently equipped)");
+    }
+
+    // If not in inventory or equipped, check if in the current room
     Optional<Item> roomItemOpt = findItemInCurrentRoom(ctx, userInput);
     if (roomItemOpt.isPresent()) {
       Item item = roomItemOpt.get();
@@ -401,32 +431,51 @@ public final class DefaultInventoryService implements InventoryService {
 
   @Override
   public CommandResult heal(GameContext ctx, String userInput) {
-    if (userInput == null || userInput.isBlank()) {
-      return CommandResult.fail("Heal with what?");
-    }
-
     var player = ctx.player();
+    var world = ctx.world();
 
-    Optional<Item> itemOpt = findItemInPlayerInventory(ctx, userInput);
-    if (itemOpt.isEmpty()) {
-      return CommandResult.fail("You don't have a " + userInput + " to heal with.");
-    }
-    Item item = itemOpt.get();
-    if (item.getItemType() != Item.ItemType.CONSUMABLE
-        || item.getConsumableType() != Item.ConsumableType.HEALTH_POTION) {
-      return CommandResult.fail("You can only heal with health potions.");
-    }
-
-    // check if player is already at max health
+    // Check if player is already at max health first
     if (player.getCurrentHealth() >= player.getMaxHealth()) {
       return CommandResult.fail("You are already at full health.");
     }
 
-    // apply healing
+    Item item;
+
+    // If no item name provided, automatically find a health potion
+    if (userInput == null || userInput.isBlank()) {
+      Optional<Item> healthPotionOpt =
+          player.getInventoryItemIds().stream()
+              .map(world::findItem)
+              .filter(Optional::isPresent)
+              .map(Optional::get)
+              .filter(
+                  i ->
+                      i.getItemType() == Item.ItemType.CONSUMABLE
+                          && i.getConsumableType() == Item.ConsumableType.HEALTH_POTION)
+              .findFirst();
+
+      if (healthPotionOpt.isEmpty()) {
+        return CommandResult.fail("You don't have any health potions.");
+      }
+      item = healthPotionOpt.get();
+    } else {
+      // If item name provided, find the specific item
+      Optional<Item> itemOpt = findItemInPlayerInventory(ctx, userInput);
+      if (itemOpt.isEmpty()) {
+        return CommandResult.fail("You don't have a " + userInput + " to heal with.");
+      }
+      item = itemOpt.get();
+      if (item.getItemType() != Item.ItemType.CONSUMABLE
+          || item.getConsumableType() != Item.ConsumableType.HEALTH_POTION) {
+        return CommandResult.fail("You can only heal with health potions.");
+      }
+    }
+
+    // Apply healing
     int healthRestored = item.getHealthRestore();
     player.heal(item.getHealthRestore());
 
-    // remove used item from inventory
+    // Remove used item from inventory
     player.removeItemFromInventory(item.getId());
 
     return CommandResult.success(

@@ -81,6 +81,7 @@ Here are the most important commands to get started:
 |---------|--------------|
 | `help` | Show all available commands |
 | `look` | Look around the current room |
+| `map` | Display a map of nearby rooms |
 | `go <direction>` | Move (north, south, east, west, up, down) |
 | `inventory` (or `i`) | Check your inventory |
 | `pickup <item>` | Pick up an item |

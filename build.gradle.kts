@@ -38,6 +38,18 @@ subprojects {
   }
   tasks.withType<Test>().configureEach { useJUnitPlatform() }
 
+  // ---- JaCoCo (code coverage) ----
+  apply(plugin = "jacoco")
+  tasks.withType<org.gradle.testing.jacoco.tasks.JacocoReport>().configureEach {
+    reports {
+      xml.required.set(true)
+      html.required.set(true)
+    }
+  }
+  tasks.named("test") {
+    finalizedBy("jacocoTestReport") // Generate report after tests run
+  }
+
   // ---- Spotless (auto-format) ----
   apply(plugin = "com.diffplug.spotless")
   extensions.configure<com.diffplug.gradle.spotless.SpotlessExtension> {
