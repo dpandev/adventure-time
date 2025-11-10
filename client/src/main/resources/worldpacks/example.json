@@ -9,9 +9,19 @@
     { "id": "ice_shard", "name": "Ice Shard", "description": "A shard of ice - sharp and dangerous.", "type": "QUEST" },
     { "id": "ancient_scroll", "name": "Ancient Scroll", "description": "Cryptic text on an old piece of paper.", "type": "QUEST" },
     { "id": "mystic_key", "name": "Mystic Key", "description": "Rusty old key. Probably opens something.", "type": "QUEST" },
+    { "id": "frozen_crown", "name": "Frozen Crown", "description": "A crown made of eternal ice, said to grant power over winter.", "type": "QUEST" },
+    { "id": "glacier_orb", "name": "Glacier Orb", "description": "A glowing orb that pulses with arctic energy.", "type": "QUEST" },
+    { "id": "ice_crystal", "name": "Ice Crystal", "description": "A perfectly formed crystal of pure ice.", "type": "QUEST" },
     { "id": "healing_potion", "name": "Healing Potion", "description": "Smells like death, but restores your health.", "type": "CONSUMABLE", "consumableType": "HEALTH_POTION", "healthRestore": 20 },
+    { "id": "greater_healing_potion", "name": "Greater Healing Potion", "description": "A more potent healing elixir.", "type": "CONSUMABLE", "consumableType": "HEALTH_POTION", "healthRestore": 50 },
     { "id": "iron_helmet", "name": "Iron Helmet", "description": "Protective headgear.", "type": "ARMOR", "armorType": "HELMET", "defenseBonus": 5 },
-    { "id": "steel_sword", "name": "Steel Sword", "description": "A sharp blade for combat.", "type": "WEAPON", "attackBonus": 10 }
+    { "id": "frost_helm", "name": "Frost Helm", "description": "A helmet forged from enchanted ice.", "type": "ARMOR", "armorType": "HELMET", "defenseBonus": 8 },
+    { "id": "ice_plate", "name": "Ice Plate Armor", "description": "Chest armor made from frozen glacial plates.", "type": "ARMOR", "armorType": "CHESTPLATE", "defenseBonus": 12 },
+    { "id": "frozen_leggings", "name": "Frozen Leggings", "description": "Leg armor that never melts.", "type": "ARMOR", "armorType": "LEGGINGS", "defenseBonus": 7 },
+    { "id": "winter_boots", "name": "Winter Boots", "description": "Boots designed for icy terrain.", "type": "ARMOR", "armorType": "BOOTS", "defenseBonus": 4 },
+    { "id": "steel_sword", "name": "Steel Sword", "description": "A sharp blade for combat.", "type": "WEAPON", "attackBonus": 10 },
+    { "id": "frostbite_blade", "name": "Frostbite Blade", "description": "A sword infused with the essence of eternal winter.", "type": "WEAPON", "attackBonus": 18 },
+    { "id": "icicle_spear", "name": "Icicle Spear", "description": "A deadly spear made from a massive icicle.", "type": "WEAPON", "attackBonus": 15 }
   ],
   "monsters": [
     {
@@ -19,7 +29,7 @@
       "name": "Ice Troll",
       "description": "A hulking frost-covered beast with razor-sharp claws.",
       "maxHealth": 50,
-      "baseAttack": 8,
+      "baseAttack": 90,
       "baseDefense": 5,
       "criticalHitThreshold": 0.25
     },
@@ -31,36 +41,72 @@
       "baseAttack": 4,
       "baseDefense": 2,
       "criticalHitThreshold": 0.35
+    },
+    {
+      "id": "snow_wolf",
+      "name": "Snow Wolf",
+      "description": "A fierce white wolf with eyes like blue ice.",
+      "maxHealth": 35,
+      "baseAttack": 10,
+      "baseDefense": 3,
+      "criticalHitThreshold": 0.30
+    },
+    {
+      "id": "frozen_guardian",
+      "name": "Frozen Guardian",
+      "description": "An ancient warrior encased in ice, brought to life by dark magic.",
+      "maxHealth": 70,
+      "baseAttack": 16,
+      "baseDefense": 8,
+      "criticalHitThreshold": 0.20
+    },
+    {
+      "id": "ice_wraith",
+      "name": "Ice Wraith",
+      "description": "A ghostly apparition that freezes everything it touches.",
+      "maxHealth": 40,
+      "baseAttack": 14,
+      "baseDefense": 4,
+      "criticalHitThreshold": 0.28
+    },
+    {
+      "id": "glacier_golem",
+      "name": "Glacier Golem",
+      "description": "A massive construct made entirely of compacted ice and snow.",
+      "maxHealth": 90,
+      "baseAttack": 20,
+      "baseDefense": 12,
+      "criticalHitThreshold": 0.15
     }
   ],
   "rooms": [
     {
       "id": "entrance",
       "name": "Frozen Gate",
-      "description": "An icy archway looms ahead.",
+      "description": "An icy archway looms ahead. The cold air bites at your skin.",
       "exits": { "north": "hall" },
       "itemIds": ["mystic_key", "steel_sword", "iron_helmet"]
     },
     {
       "id": "hall",
       "name": "Crystal Hall",
-      "description": "Shards glitter underfoot.",
+      "description": "A vast hall where crystalline shards glitter underfoot. Light refracts in dazzling patterns.",
       "itemIds": ["ice_shard"],
       "monsterId": "ice_troll",
-      "exits": { "south": "entrance", "east": "chamber", "north": "ice_cavern" }
+      "exits": { "south": "entrance", "east": "chamber", "north": "ice_cavern", "west": "frozen_library" }
     },
     {
       "id": "chamber",
       "name": "Chamber of Secrets",
-      "description": "A hidden room filled with ancient knowledge.",
+      "description": "A hidden room filled with ancient knowledge and forgotten lore.",
       "itemIds": ["ancient_scroll", "healing_potion"],
       "monsterId": "frost_sprite",
-      "exits": { "west": "hall" }
+      "exits": { "west": "hall", "north": "treasure_vault" }
     },
     {
       "id": "ice_cavern",
       "name": "Ice Cavern",
-      "description": "A dark cavern with walls of ice.",
+      "description": "A dark cavern with walls of solid ice. Your breath creates clouds in the frigid air.",
       "itemIds": ["healing_potion"],
       "puzzles": [
         {
@@ -72,7 +118,63 @@
           "maxAttempts": 3
         }
       ],
-      "exits": { "south": "hall" }
+      "exits": { "south": "hall", "west": "frozen_lake", "north": "glacier_depths" }
+    },
+    {
+      "id": "frozen_library",
+      "name": "Frozen Library",
+      "description": "Ancient tomes frozen in ice line the walls. Knowledge preserved for eternity.",
+      "itemIds": ["frost_sigil", "ice_crystal"],
+      "monsterId": "ice_wraith",
+      "exits": { "east": "hall", "north": "frost_throne" }
+    },
+    {
+      "id": "frozen_lake",
+      "name": "Frozen Lake",
+      "description": "A vast expanse of perfectly smooth ice stretches before you. Something moves beneath the surface.",
+      "itemIds": ["icicle_spear", "winter_boots"],
+      "monsterId": "snow_wolf",
+      "exits": { "east": "ice_cavern", "north": "ice_bridge" }
+    },
+    {
+      "id": "treasure_vault",
+      "name": "Treasure Vault",
+      "description": "A room filled with frozen treasures from a bygone era. Riches beyond imagination.",
+      "itemIds": ["frostbite_blade", "ice_plate", "frost_helm", "greater_healing_potion"],
+      "puzzles": [
+        {
+          "id": "ice_puzzle",
+          "type": "RIDDLE",
+          "prompt": "I am always hungry and must always be fed. The finger I touch will soon turn red. What am I?",
+          "answer": "fire",
+          "rewardItemId": "frozen_crown",
+          "maxAttempts": 3
+        }
+      ],
+      "exits": { "south": "chamber" }
+    },
+    {
+      "id": "glacier_depths",
+      "name": "Glacier Depths",
+      "description": "Deep within the glacier, ancient ice formations create a maze of frozen corridors.",
+      "itemIds": ["frozen_leggings", "healing_potion"],
+      "monsterId": "frozen_guardian",
+      "exits": { "south": "ice_cavern", "east": "frost_throne" }
+    },
+    {
+      "id": "frost_throne",
+      "name": "Frost Throne Room",
+      "description": "A magnificent throne carved from a single massive glacier dominates the chamber. This is the heart of the frozen realm.",
+      "itemIds": ["glacier_orb"],
+      "monsterId": "glacier_golem",
+      "exits": { "south": "frozen_library", "west": "glacier_depths" }
+    },
+    {
+      "id": "ice_bridge",
+      "name": "Ice Bridge",
+      "description": "A narrow bridge of ice spans a bottomless chasm. One wrong step could be your last.",
+      "itemIds": ["greater_healing_potion"],
+      "exits": { "south": "frozen_lake" }
     }
   ]
 }

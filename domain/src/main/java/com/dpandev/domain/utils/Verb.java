@@ -20,5 +20,6 @@ public enum Verb {
   SAVE,
   QUIT,
   LOAD,
+  NEW_GAME,
   UNKNOWN,
 }

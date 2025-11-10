@@ -6,8 +6,8 @@ import java.util.Objects;
 
 /** A context object encapsulating the game world and the current player. */
 public final class GameContext {
-  public final World world;
-  public final Player player;
+  private World world;
+  private Player player;
   // Flag indicating if the game is awaiting a puzzle answer from the player
   private boolean awaitingPuzzleAnswer = false;
   // Combat state
@@ -110,6 +110,22 @@ public final class GameContext {
 
   /** End combat and clear combat state. */
   public void endCombat() {
+    this.inCombat = false;
+    this.combatMonsterId = null;
+  }
+
+  /**
+   * Reset the game by replacing the world and player with fresh instances.
+   *
+   * @param newWorld the freshly loaded world
+   * @param playerName the name for the new player
+   */
+  public void resetGame(World newWorld, String playerName) {
+    this.world = Objects.requireNonNull(newWorld, "world must not be null");
+    this.player = new Player(playerName, newWorld.getStartRoomId());
+
+    // Reset game state flags
+    this.awaitingPuzzleAnswer = false;
     this.inCombat = false;
     this.combatMonsterId = null;
   }

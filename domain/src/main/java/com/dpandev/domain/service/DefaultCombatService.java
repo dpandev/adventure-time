@@ -129,12 +129,10 @@ public final class DefaultCombatService implements CombatService {
         .append(" attacks you for ")
         .append(actualPlayerDamage)
         .append(" damage!\n");
-
+    // Check if player is dead
     if (!player.isAlive()) {
-      ctx.endCombat();
-      sb.append("\n*** YOU HAVE DIED ***\n");
-      sb.append("Game Over!\n");
-      sb.append("Type 'quit' to exit or 'load' to load a saved game.\n");
+      sb.append("\n");
+      sb.append(handlePlayerDeath(ctx).message());
       return CommandResult.fail(sb.toString());
     }
 
@@ -192,14 +190,17 @@ public final class DefaultCombatService implements CombatService {
 
   @Override
   public CommandResult handlePlayerDeath(GameContext ctx) {
+    ctx.endCombat();
+
     StringBuilder sb = new StringBuilder();
     sb.append("\n╔════════════════════════════╗\n");
-    sb.append("║       GAME OVER!          ║\n");
+    sb.append("║       GAME OVER!           ║\n");
     sb.append("╚════════════════════════════╝\n");
-    sb.append("\nYou died.\n\n");
+    sb.append("\nYou have fallen in battle.\n\n");
     sb.append("Options:\n");
-    sb.append("  'quit' - Exit the game\n");
+    sb.append("  'new' - Start a new game\n");
     sb.append("  'load' - Load your last saved game\n");
+    sb.append("  'quit' - Exit the game\n");
 
     return CommandResult.fail(sb.toString());
   }

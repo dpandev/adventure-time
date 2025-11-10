@@ -145,6 +145,9 @@ public class SimpleCommandParser implements CommandParser {
     verbMap.put("ignore", Verb.IGNORE);
     verbMap.put("flee", Verb.IGNORE);
     verbMap.put("run", Verb.IGNORE);
+    verbMap.put("new", Verb.NEW_GAME);
+    verbMap.put("newgame", Verb.NEW_GAME);
+    verbMap.put("restart", Verb.NEW_GAME);
     verbMap.put("quit", Verb.QUIT);
     verbMap.put("save", Verb.SAVE);
     verbMap.put("load", Verb.LOAD);
