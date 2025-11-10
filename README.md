@@ -38,6 +38,23 @@ A co-op adventure game that features map exploration, puzzles/quests, and a rich
   repository/     // Postgres repositories
 ```
 
+## Quick Demo
+
+See all game features in action with the automated demo:
+
+**macOS/Linux:**
+```bash
+./demo.sh
+```
+
+**Windows:**
+```batch
+demo.bat
+```
+
+The demo showcases: movement, combat, puzzles, inventory, equipment, healing, and save system.
+See [DEMO.md](docs/demo.md) for detailed documentation.
+
 ## Gameplay Scenario Screenshots
 View [Gameplay Scenario Screenshots](docs/assets/scenario-screenshots/)
 View [Example Worldpack Map](docs/assets/worldpack-maps/example-worldpack-map.txt)
