@@ -53,7 +53,7 @@ public final class ClientApp {
     CommandController inventoryController = new InventoryController(inventoryService);
     CommandController interactionController = new InteractionController(interactionService);
     CommandController combatController = new CombatController(combatService);
-    CommandController systemController = new SystemController(saveService, view);
+    CommandController systemController = new SystemController(saveService, view, loader);
 
     // init front controller here and pass controllers as map with verb categories as keys
     FrontController frontController =
@@ -61,7 +61,8 @@ public final class ClientApp {
             Map.of(
                 VerbCategory.MOVEMENT, movementController,
                 VerbCategory.INVENTORY, inventoryController,
-                VerbCategory.INTERACTION, combatController,
+                VerbCategory.INTERACTION, interactionController,
+                VerbCategory.COMBAT, combatController,
                 VerbCategory.SYSTEM, systemController),
             systemController // fallback to system controller
             );

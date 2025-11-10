@@ -230,6 +230,6 @@ Start your adventure with:
 ./gradlew :client:run
 ```
 
-Good luck, adventurer! 🗡️
+Good luck, adventurer!
 
 
