@@ -1,6 +1,7 @@
 package com.dpandev.domain.service;
 
 import com.dpandev.domain.model.Item;
+import com.dpandev.domain.model.Player;
 import com.dpandev.domain.model.Room;
 import com.dpandev.domain.utils.GameContext;
 import java.util.List;
@@ -8,7 +9,7 @@ import java.util.Optional;
 
 public final class DefaultInventoryService implements InventoryService {
 
-  private Optional<Item> findItemInCurrentRoom(GameContext ctx, String itemId) {
+  private Optional<Item> findItemInCurrentRoom(GameContext ctx, String userInput) {
     var player = ctx.player();
     var world = ctx.world();
 
@@ -18,21 +19,63 @@ public final class DefaultInventoryService implements InventoryService {
     }
 
     var room = roomOpt.get();
-    if (room.hasItem(itemId)) {
-      return world.findItem(itemId);
+
+    // try to find by exact ID match first in the current room
+    if (room.hasItem(userInput)) {
+      return world.findItem(userInput);
     }
 
-    return Optional.empty();
+    // try to find by fuzzy name match (case-insensitive) ONLY in current room items
+    return room.getItemIds().stream()
+        .map(world::findItem)
+        .filter(Optional::isPresent)
+        .map(Optional::get)
+        .filter(item -> item.getName().equalsIgnoreCase(userInput))
+        .findFirst();
   }
 
-  private Optional<Item> findItemInPlayerInventory(GameContext ctx, String itemId) {
+  private Optional<Item> findItemInPlayerInventory(GameContext ctx, String userInput) {
     var player = ctx.player();
     var world = ctx.world();
 
+    // try exact ID match first
+    Optional<Item> byId =
+        player.getInventoryItemIds().stream()
+            .filter(id -> id.equals(userInput))
+            .findFirst()
+            .flatMap(world::findItem);
+
+    if (byId.isPresent()) {
+      return byId;
+    }
+
+    // try name match (case-insensitive)
     return player.getInventoryItemIds().stream()
-        .filter(id -> id.equals(itemId))
-        .findFirst()
-        .flatMap(world::findItem);
+        .map(world::findItem)
+        .filter(Optional::isPresent)
+        .map(Optional::get)
+        .filter(item -> item.getName().equalsIgnoreCase(userInput))
+        .findFirst();
+  }
+
+  private Optional<Item> findEquippedItem(GameContext ctx, String userInput) {
+    var player = ctx.player();
+    var world = ctx.world();
+
+    // check all equipment slots
+    for (Player.EquipmentSlot slot : Player.EquipmentSlot.values()) {
+      String equippedId = player.getEquippedItem(slot);
+      if (equippedId != null) {
+        if (equippedId.equals(userInput)) {
+          return world.findItem(equippedId);
+        }
+        Optional<Item> item = world.findItem(equippedId);
+        if (item.isPresent() && item.get().getName().equalsIgnoreCase(userInput)) {
+          return item;
+        }
+      }
+    }
+    return Optional.empty();
   }
 
   @Override
@@ -63,8 +106,8 @@ public final class DefaultInventoryService implements InventoryService {
   }
 
   @Override
-  public CommandResult pickup(GameContext ctx, String itemId) {
-    if (itemId == null || itemId.isBlank()) {
+  public CommandResult pickup(GameContext ctx, String userInput) {
+    if (userInput == null || userInput.isBlank()) {
       return CommandResult.fail("Pickup what?");
     }
     var player = ctx.player();
@@ -76,9 +119,9 @@ public final class DefaultInventoryService implements InventoryService {
       return CommandResult.fail("Your current location is unknown."); // this should not happen
     }
 
-    Optional<Item> itemOpt = findItemInCurrentRoom(ctx, itemId);
+    Optional<Item> itemOpt = findItemInCurrentRoom(ctx, userInput);
     if (itemOpt.isEmpty()) {
-      return CommandResult.fail("There is no " + itemId + " here to pick up.");
+      return CommandResult.fail("There is no " + userInput + " here to pick up.");
     }
 
     // add to player inv then remove from Room
@@ -87,13 +130,13 @@ public final class DefaultInventoryService implements InventoryService {
     currentRoomOpt.get().removeItemFromRoom(item.getId());
 
     return CommandResult.success(
-        itemId
+        item.getName()
             + " has been picked up from the room and successfully added to the player inventory.");
   }
 
   @Override
-  public CommandResult drop(GameContext ctx, String itemId) {
-    if (itemId == null || itemId.isBlank()) {
+  public CommandResult drop(GameContext ctx, String userInput) {
+    if (userInput == null || userInput.isBlank()) {
       return CommandResult.fail("Drop what?");
     }
     var world = ctx.world();
@@ -105,30 +148,30 @@ public final class DefaultInventoryService implements InventoryService {
     }
 
     // Check if item is in player's inventory
-    Optional<Item> itemOpt = findItemInPlayerInventory(ctx, itemId);
+    Optional<Item> itemOpt = findItemInPlayerInventory(ctx, userInput);
     if (itemOpt.isEmpty()) {
-      return CommandResult.fail("You don't have a " + itemId + " to drop.");
+      return CommandResult.fail("You don't have a " + userInput + " to drop.");
     }
 
     Item item = itemOpt.get();
-    player.removeItemFromInventory(itemId);
-    roomOpt.get().addItemToRoom(itemId);
+    player.removeItemFromInventory(item.getId());
+    roomOpt.get().addItemToRoom(item.getId());
 
     return CommandResult.success(
-        itemId
+        item.getName()
             + " has been dropped successfully from the player inventory and placed in "
             + roomOpt.get().getName()
             + ".");
   }
 
   @Override
-  public CommandResult use(GameContext ctx, String itemId) {
-    if (itemId == null || itemId.isBlank()) {
+  public CommandResult use(GameContext ctx, String userInput) {
+    if (userInput == null || userInput.isBlank()) {
       return CommandResult.fail("Use what?");
     }
 
     // First, try to find in player inventory
-    Optional<Item> inventoryItemOpt = findItemInPlayerInventory(ctx, itemId);
+    Optional<Item> inventoryItemOpt = findItemInPlayerInventory(ctx, userInput);
     if (inventoryItemOpt.isPresent()) {
       Item item = inventoryItemOpt.get();
       // Handle inventory item usage (potion, key, etc.)
@@ -136,7 +179,7 @@ public final class DefaultInventoryService implements InventoryService {
     }
 
     // If not in inventory, check if it's a fixture in the current room
-    Optional<Item> roomItemOpt = findItemInCurrentRoom(ctx, itemId);
+    Optional<Item> roomItemOpt = findItemInCurrentRoom(ctx, userInput);
     if (roomItemOpt.isPresent()) {
       Item item = roomItemOpt.get();
       // Handle room fixture usage (lever, switch, etc.)
@@ -144,29 +187,163 @@ public final class DefaultInventoryService implements InventoryService {
           "You interact with the " + item.getName() + ". (Nothing special happens.)");
     }
 
-    return CommandResult.fail("You don't see a " + itemId + " to use.");
+    return CommandResult.fail("You don't see a " + userInput + " to use.");
   }
 
   @Override
-  public CommandResult inspect(GameContext ctx, String itemId) {
-    if (itemId == null || itemId.isBlank()) {
+  public CommandResult inspect(GameContext ctx, String userInput) {
+    if (userInput == null || userInput.isBlank()) {
       return CommandResult.fail("Inspect what?");
     }
 
     // First, try to find in player inventory
-    Optional<Item> inventoryItemOpt = findItemInPlayerInventory(ctx, itemId);
+    Optional<Item> inventoryItemOpt = findItemInPlayerInventory(ctx, userInput);
     if (inventoryItemOpt.isPresent()) {
       Item item = inventoryItemOpt.get();
       return CommandResult.success(item.getName() + ": " + item.getDescription());
     }
 
     // If not in inventory, check if it's in the current room
-    Optional<Item> roomItemOpt = findItemInCurrentRoom(ctx, itemId);
+    Optional<Item> roomItemOpt = findItemInCurrentRoom(ctx, userInput);
     if (roomItemOpt.isPresent()) {
       Item item = roomItemOpt.get();
       return CommandResult.success(item.getName() + ": " + item.getDescription());
     }
 
-    return CommandResult.fail("You don't see a " + itemId + " to inspect.");
+    return CommandResult.fail("You don't see a " + userInput + " to inspect.");
+  }
+
+  @Override
+  public CommandResult equip(GameContext ctx, String userInput) {
+    if (userInput == null || userInput.isBlank()) {
+      return CommandResult.fail("Equip what?");
+    }
+
+    var player = ctx.player();
+
+    // Try to find the item in player's inventory
+    Optional<Item> itemOpt = findItemInPlayerInventory(ctx, userInput);
+    if (itemOpt.isEmpty()) {
+      return CommandResult.fail("You don't have a " + userInput + " to equip.");
+    }
+
+    Item item = itemOpt.get();
+    // determine the equipment slot based on item type
+    Player.EquipmentSlot slot;
+    if (item.getItemType() == Item.ItemType.WEAPON) {
+      slot = Player.EquipmentSlot.WEAPON;
+    } else if (item.getItemType() == Item.ItemType.ARMOR) {
+      if (item.getArmorType() == null) {
+        return CommandResult.fail(item.getName() + " cannot be equipped.");
+      }
+      slot =
+          switch (item.getArmorType()) {
+            case HELMET -> Player.EquipmentSlot.HELMET;
+            case CHESTPLATE -> Player.EquipmentSlot.CHESTPLATE;
+            case LEGGINGS -> Player.EquipmentSlot.LEGGINGS;
+            case BOOTS -> Player.EquipmentSlot.BOOTS;
+          };
+    } else {
+      return CommandResult.fail("You can only equip weapons or armor.");
+    }
+
+    // Unequip any existing item in that slot
+    String previouslyEquippedItemId = player.getEquippedItem(slot);
+    if (previouslyEquippedItemId != null) {
+      // previous item goes back to inventory (swapped)
+      Optional<Item> prevItemOpt = ctx.world().findItem(previouslyEquippedItemId);
+      // apply stat change (remove bonuses from previous item)
+      prevItemOpt.ifPresent(
+          prev -> {
+            player.decreaseBaseAttack(prev.getAttackBonus());
+            player.decreaseBaseDefense(prev.getDefenseBonus());
+          });
+      // Add previous item back to inventory
+      player.addItemToInventory(previouslyEquippedItemId);
+    }
+
+    // remove from inventory and equip
+    player.removeItemFromInventory(item.getId());
+    player.equipItem(slot, item.getId());
+
+    // apply new item stat bonuses
+    player.increaseBaseAttack(item.getAttackBonus());
+    player.increaseBaseDefense(item.getDefenseBonus());
+
+    return CommandResult.success("You have equipped the " + item.getName() + ".");
+  }
+
+  @Override
+  public CommandResult unequip(GameContext ctx, String userInput) {
+    if (userInput == null || userInput.isBlank()) {
+      return CommandResult.fail("Unequip what?");
+    }
+
+    var player = ctx.player();
+
+    // Find the equipped item by user input (ID or name)
+    Optional<Item> itemOpt = findEquippedItem(ctx, userInput);
+    if (itemOpt.isEmpty()) {
+      return CommandResult.fail("You don't have a " + userInput + " equipped.");
+    }
+
+    Item item = itemOpt.get();
+
+    // Find which slot has this item
+    Player.EquipmentSlot slotToUnequip = null;
+    for (Player.EquipmentSlot slot : Player.EquipmentSlot.values()) {
+      if (player.hasEquippedItem(slot) && player.getEquippedItem(slot).equals(item.getId())) {
+        slotToUnequip = slot;
+        break;
+      }
+    }
+
+    if (slotToUnequip == null) {
+      return CommandResult.fail("Unable to unequip " + item.getName() + ".");
+    }
+
+    // Remove stat bonuses
+    player.decreaseBaseAttack(item.getAttackBonus());
+    player.decreaseBaseDefense(item.getDefenseBonus());
+
+    // Unequip and add back to inventory
+    player.unequipItem(slotToUnequip);
+    player.addItemToInventory(item.getId());
+
+    return CommandResult.success("You unequipped the " + item.getName() + ".");
+  }
+
+  @Override
+  public CommandResult heal(GameContext ctx, String userInput) {
+    if (userInput == null || userInput.isBlank()) {
+      return CommandResult.fail("Heal with what?");
+    }
+
+    var player = ctx.player();
+
+    Optional<Item> itemOpt = findItemInPlayerInventory(ctx, userInput);
+    if (itemOpt.isEmpty()) {
+      return CommandResult.fail("You don't have a " + userInput + " to heal with.");
+    }
+    Item item = itemOpt.get();
+    if (item.getItemType() != Item.ItemType.CONSUMABLE
+        || item.getConsumableType() != Item.ConsumableType.HEALTH_POTION) {
+      return CommandResult.fail("You can only heal with health potions.");
+    }
+
+    // check if player is already at max health
+    if (player.getCurrentHealth() >= player.getMaxHealth()) {
+      return CommandResult.fail("You are already at full health.");
+    }
+
+    // apply healing
+    int healthRestored = item.getHealthRestore();
+    player.heal(item.getHealthRestore());
+
+    // remove used item from inventory
+    player.removeItemFromInventory(item.getId());
+
+    return CommandResult.success(
+        "You used the " + item.getName() + " and restored " + healthRestored + " health.");
   }
 }

@@ -5,11 +5,13 @@
   "name": "Main World",
   "startRoomId": "entrance",
   "items": [
-    { "id": "frost_sigil", "name": "Frost Sigil", "description": "Frostier than a Wendy's frosty." },
-    { "id": "ice_shard", "name": "Ice Shard", "description": "A shard of ice - sharp and dangerous." },
-    { "id": "ancient_scroll", "name": "Ancient Scroll", "description": "Cryptic text on an old piece of paper." },
-    { "id": "mystic_key", "name": "Mystic Key", "description": "Rusty old key. Probably opens something." },
-    { "id": "healing_potion", "name": "Healing Potion", "description": "Smells like death, but restores your health." }
+    { "id": "frost_sigil", "name": "Frost Sigil", "description": "Frostier than a Wendy's frosty.", "type": "QUEST" },
+    { "id": "ice_shard", "name": "Ice Shard", "description": "A shard of ice - sharp and dangerous.", "type": "QUEST" },
+    { "id": "ancient_scroll", "name": "Ancient Scroll", "description": "Cryptic text on an old piece of paper.", "type": "QUEST" },
+    { "id": "mystic_key", "name": "Mystic Key", "description": "Rusty old key. Probably opens something.", "type": "QUEST" },
+    { "id": "healing_potion", "name": "Healing Potion", "description": "Smells like death, but restores your health.", "type": "CONSUMABLE", "consumableType": "HEALTH_POTION", "healthRestore": 20 },
+    { "id": "iron_helmet", "name": "Iron Helmet", "description": "Protective headgear.", "type": "ARMOR", "armorType": "HELMET", "defenseBonus": 5 },
+    { "id": "steel_sword", "name": "Steel Sword", "description": "A sharp blade for combat.", "type": "WEAPON", "attackBonus": 10 }
   ],
   "monsters": [
     {
@@ -35,17 +37,7 @@
       "name": "Frozen Gate",
       "description": "An icy archway looms ahead.",
       "exits": { "north": "hall" },
-      "itemIds": ["mystic_key"],
-      "puzzles": [
-        {
-          "id": "riddle_1",
-          "type": "RIDDLE",
-          "prompt": "I speak without a mouth and hear without ears. What am I?",
-          "answer": "echo",
-          "rewardItemId": "frost_sigil",
-          "maxAttempts": 3
-        }
-      ]
+      "itemIds": ["mystic_key", "steel_sword", "iron_helmet"]
     },
     {
       "id": "hall",
@@ -53,7 +45,7 @@
       "description": "Shards glitter underfoot.",
       "itemIds": ["ice_shard"],
       "monsterId": "ice_troll",
-      "exits": { "south": "entrance", "east": "chamber" }
+      "exits": { "south": "entrance", "east": "chamber", "north": "ice_cavern" }
     },
     {
       "id": "chamber",
@@ -62,6 +54,23 @@
       "itemIds": ["ancient_scroll", "healing_potion"],
       "monsterId": "frost_sprite",
       "exits": { "west": "hall" }
+    },
+    {
+      "id": "ice_cavern",
+      "name": "Ice Cavern",
+      "description": "A dark cavern with walls of ice.",
+      "itemIds": ["healing_potion"],
+      "puzzles": [
+        {
+          "id": "riddle_1",
+          "type": "RIDDLE",
+          "prompt": "I speak without a mouth and hear without ears. What am I?",
+          "answer": "echo",
+          "rewardItemId": "healing_potion",
+          "maxAttempts": 3
+        }
+      ],
+      "exits": { "south": "hall" }
     }
   ]
 }

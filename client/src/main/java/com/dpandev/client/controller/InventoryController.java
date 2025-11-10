@@ -23,6 +23,9 @@ public final class InventoryController implements CommandController {
       case INVENTORY -> inventoryService.inventory(ctx);
       case USE -> inventoryService.use(ctx, cmd.target());
       case INSPECT -> inventoryService.inspect(ctx, cmd.target());
+      case EQUIP -> inventoryService.equip(ctx, cmd.target());
+      case UNEQUIP -> inventoryService.unequip(ctx, cmd.target());
+      case HEAL -> inventoryService.heal(ctx, cmd.target());
       default -> CommandResult.fail("Unsupported verb for inventory: " + cmd.verb());
     };
   }
