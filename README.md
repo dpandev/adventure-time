@@ -1,8 +1,10 @@
 # Adventure Time
 
-A multi-player co-op adventure game that features map exploration, puzzles/quests, and a rich story plot. The game utilizes an MVC architecture - separating the data from the game logic - allowing 'hot-swappable' game content.
+A co-op adventure game that features map exploration, puzzles/quests, and a rich story plot. The game utilizes an MVC architecture - separating the data from the game logic - allowing 'hot-swappable' game content.
 
-**Stack**: Java 21 (Temurin), Gradle 8.x, Spring Boot 3.5.x (server), H2 (dev), Postgres (prod), Flyway, Testcontainers, JUnit 5.
+**Stack**: Java 21 (Temurin), Gradle 8.x, Spring Boot 3.5.x (server), JUnit 5.
+
+**Planned**: H2 (dev db), Postgres (prod db), Flyway, Testcontainers.
 
 ---
 
@@ -15,14 +17,15 @@ A multi-player co-op adventure game that features map exploration, puzzles/quest
   world/           // World definitions + loader
   command/         // Command objects, parser, handlers
   service/         // Movement, inventory, inspect/look, save API, etc.
+  spi/             // Interfaces for client/server implementations
   util/            // ID types, small helpers
 
 :client
     com.dpandev.client
     controller/      // Command controllers
-    io/              // Console IO
+    persistence/     // File-based implementation of SaveRepository
     runtime/         // Game loop, session
-    persistence/     // H2 db implementation of SaveRepository
+      ClientApp.java  // Main entry point
     view/            // Console view rendering
   resource/
     worldpacks/     // World content packs (JSON)
@@ -61,6 +64,13 @@ View [Gameplay Demo Video](~~link~~)
 ---
 
 ## Quick Start
+
+### Load Frozen World (Default Example Worldpack)
+```bash
+./gradlew :client:run --args="--world=example" # can change to other if the .json exists (client/src/main/resources/worldpacks/)
+# Or just:
+./gradlew :client:run
+```
 
 ### For Players
 
