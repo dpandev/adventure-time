@@ -6,8 +6,44 @@ A multi-player co-op adventure game that features map exploration, puzzles/quest
 
 ---
 
+## Architecture Overview
+
+```
+:domain
+  com.dpandev.domain
+  model/           // Pure state: Player, Room, Item, Puzzle, Monster, etc.
+  world/           // World definitions + loader
+  command/         // Command objects, parser, handlers
+  service/         // Movement, inventory, inspect/look, save API, etc.
+  util/            // ID types, small helpers
+
+:client
+    com.dpandev.client
+    controller/      // Command controllers
+    io/              // Console IO
+    runtime/         // Game loop, session
+    persistence/     // H2 db implementation of SaveRepository
+    view/            // Console view rendering
+  resource/
+    worldpacks/     // World content packs (JSON)
+
+:server           # builds, but not yet implemented
+  com.dpandev.server
+  config/         // Spring configuration
+  controller/     // REST & WebSocket controllers
+  service/        // Save management, auth, user management
+  repository/     // Postgres repositories
+```
+
+## Gameplay Scenario Screenshots
+View [Gameplay Scenario Screenshots](docs/assets/scenario-screenshots/)
+View [Example Worldpack Map](docs/assets/example-worldpack-map.txt)
+View [Gameplay Demo Video](~~link~~)
+
+---
+
 ## UML Diagram
-[UML Diagram Link](https://drive.google.com/file/d/1-DTjbgjPbhBIcD-TMBt5lK5gtYeajm4L/view?usp=drive_link)
+[UML Diagram Link](https://drive.google.com/file/d/1-DTjbgjPbhBIcD-TMBt5lK5gtYeajm4L/view?usp=drive_link) (needs update for latest version)
 
 ---
 
@@ -76,10 +112,10 @@ Want to play the game? Start here:
 
 ### Developer Documentation
 - [Developer Setup](docs/dev/dev-setup.md) - Environment setup and installation
-- [Architecture Overview](docs/dev/architecture.md) - System design and structure
+- ~~[Architecture Overview](docs/dev/architecture.md) - System design and structure~~ (to be updated)
+- [API Documentation](docs/dev/api/) - Code reference for modules and classes
 - [Testing Guide](docs/dev/testing.md) - Testing strategies and examples
 - [Runbook](docs/dev/runbook.md) - Operations and deployment
-- [ADR (Architecture Decision Records)](docs/dev/adr/) - Design decisions
 
 ### Admin Documentation
 - [Content Packs Guide](docs/admin/content-packs.md) - Create custom worlds and content
