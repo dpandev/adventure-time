@@ -40,7 +40,7 @@ A co-op adventure game that features map exploration, puzzles/quests, and a rich
 
 ## Gameplay Scenario Screenshots
 View [Gameplay Scenario Screenshots](docs/assets/scenario-screenshots/)
-View [Example Worldpack Map](docs/assets/example-worldpack-map.txt)
+View [Example Worldpack Map](docs/assets/worldpack-maps/example-worldpack-map.txt)
 View [Gameplay Demo Video](~~link~~)
 
 ---
@@ -65,12 +65,27 @@ View [Gameplay Demo Video](~~link~~)
 
 ## Quick Start
 
-### Load Frozen World (Default Example Worldpack)
+### Choose Your Adventure
+
+**Frozen World (Default):**
 ```bash
-./gradlew :client:run --args="--world=example" # can change to other if the .json exists (client/src/main/resources/worldpacks/)
-# Or just:
 ./gradlew :client:run
+# or explicitly:
+./gradlew :client:run --args="--world=example"
 ```
+
+**Jurassic Park World:**
+```bash
+./gradlew :client:run --args="--world=jurassic"
+```
+
+**Willy Wonka's Chocolate Factory:**
+```bash
+./gradlew :client:run --args="--world=wonka"
+```
+
+*All worldpacks are located in `client/src/main/resources/worldpacks/`*
+*All worldpack maps are located in `docs/assets/worldpack-maps/`*
 
 ### For Players
 
