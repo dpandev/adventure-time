@@ -81,28 +81,47 @@ public final class DefaultInventoryService implements InventoryService {
   @Override
   public CommandResult inventory(GameContext ctx) {
     var player = ctx.player();
+    var world = ctx.world();
     List<String> inv = player.getInventoryItemIds();
-
-    if (inv.isEmpty()) {
-      return CommandResult.success("You didn't pickup any items yet.");
-    }
+    var equippedItems = player.getEquippedItems();
 
     StringBuilder sb = new StringBuilder();
-    sb.append("You are carrying:\n");
+
+    // show equipped items
+    if (!equippedItems.isEmpty()) {
+      sb.append("=== EQUIPPED ===\n");
+      for (var entry : equippedItems.entrySet()) {
+        Optional<Item> itemOpt = world.findItem(entry.getValue());
+        if (itemOpt.isPresent()) {
+          Item item = itemOpt.get();
+          sb.append("  [").append(entry.getKey()).append("] ").append(item.getName()).append("\n");
+        }
+      }
+      sb.append("\n");
+    }
+
+    // show inventory items
+    if (inv.isEmpty() && equippedItems.isEmpty()) {
+      return CommandResult.success("You don't have any items yet.");
+    } else if (inv.isEmpty()) {
+      return CommandResult.success(sb.toString().trim());
+    }
+
+    sb.append("=== INVENTORY ===\n");
     for (String itemId : inv) {
-      Optional<Item> itemOpt = ctx.world().findItem(itemId);
+      Optional<Item> itemOpt = world.findItem(itemId);
       if (itemOpt.isPresent()) {
         Item item = itemOpt.get();
-        sb.append("- ")
+        sb.append("  - ")
             .append(item.getName())
             .append(": ")
             .append(item.getDescription())
             .append("\n");
       } else {
-        sb.append("- Unknown item with ID: ").append(itemId).append("\n");
+        sb.append("  - Unknown item with ID: ").append(itemId).append("\n");
       }
     }
-    return CommandResult.success(sb.toString());
+    return CommandResult.success(sb.toString().trim());
   }
 
   @Override
