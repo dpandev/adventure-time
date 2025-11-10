@@ -61,7 +61,8 @@ public final class ClientApp {
             systemController // fallback to system controller
             );
 
-    CliAppRunner runner = new CliAppRunner(view, parser, frontController, saveService, ctx);
+    CliAppRunner runner =
+        new CliAppRunner(view, parser, frontController, saveService, explorationService, ctx);
     runner.run();
   }
 }

@@ -21,4 +21,13 @@ public interface ExplorationService {
    * @return the result of the move command
    */
   CommandResult move(GameContext ctx, String direction);
+
+  /**
+   * Get a description of the current room (name, description, and exits). This is used when
+   * entering a room or starting the game.
+   *
+   * @param ctx the game context
+   * @return the result containing the room description
+   */
+  CommandResult describeCurrentRoom(GameContext ctx);
 }

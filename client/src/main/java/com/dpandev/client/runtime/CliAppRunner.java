@@ -4,6 +4,7 @@ import com.dpandev.client.controller.FrontController;
 import com.dpandev.client.view.ConsoleView;
 import com.dpandev.domain.command.CommandParser;
 import com.dpandev.domain.service.CommandResult;
+import com.dpandev.domain.service.ExplorationService;
 import com.dpandev.domain.service.SaveService;
 import com.dpandev.domain.utils.CommandToken;
 import com.dpandev.domain.utils.GameContext;
@@ -15,6 +16,7 @@ public final class CliAppRunner {
   private final CommandParser parser;
   private final FrontController frontController;
   private final SaveService saveService;
+  private final ExplorationService explorationService;
   private final GameContext ctx;
 
   public CliAppRunner(
@@ -22,17 +24,22 @@ public final class CliAppRunner {
       CommandParser parser,
       FrontController frontController,
       SaveService saveService,
+      ExplorationService explorationService,
       GameContext ctx) {
     this.view = view;
     this.parser = parser;
     this.frontController = frontController;
     this.saveService = saveService;
+    this.explorationService = explorationService;
     this.ctx = ctx;
   }
 
   public void run() {
     view.println("Welcome to Adventure Time");
     view.println("Type 'help' for commands, 'quit' to exit.");
+    view.println("");
+
+    showCurrentRoom();
 
     while (true) {
       view.printf("> ");
@@ -77,5 +84,14 @@ public final class CliAppRunner {
       view.println(e.getMessage());
     }
     view.println(message);
+  }
+
+  /** Display the current room's name, description, and exits. */
+  private void showCurrentRoom() {
+    CommandResult result = explorationService.describeCurrentRoom(ctx);
+    if (result != null && !result.message().isBlank()) {
+      view.println(result.message());
+      view.println("");
+    }
   }
 }

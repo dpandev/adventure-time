@@ -1,7 +1,9 @@
 package com.dpandev.domain.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Represents a player in the game with attributes such as name, score, current room, inventory
@@ -13,6 +15,16 @@ public final class Player extends Character {
   private final List<String> inventoryItems;
   private List<String> puzzlesSolved;
   private final List<String> roomsVisited;
+  private final Map<EquipmentSlot, String> equippedItems = new HashMap<>();
+
+  /** Enum representing different equipment slots for the player. */
+  public enum EquipmentSlot {
+    WEAPON,
+    HELMET,
+    CHESTPLATE,
+    LEGGINGS,
+    BOOTS
+  }
 
   /**
    * Constructs a new Player with the specified name.
@@ -146,5 +158,55 @@ public final class Player extends Character {
    */
   public void addRoomToRoomsVisited(String roomId) {
     this.roomsVisited.add(roomId);
+  }
+
+  /**
+   * Gets a map of equipped items by equipment slot.
+   *
+   * @return A map where the key is the equipment slot and the value is the item ID.
+   */
+  public Map<EquipmentSlot, String> getEquippedItems() {
+    return new HashMap<>(equippedItems);
+  }
+
+  /**
+   * Checks if the player has an item equipped in the specified equipment slot.
+   *
+   * @param slot The equipment slot to check.
+   * @return true if an item is equipped in that slot, false otherwise.
+   */
+  public boolean hasEquippedItem(EquipmentSlot slot) {
+    return equippedItems.containsKey(slot);
+  }
+
+  /**
+   * Gets the item ID equipped in the specified equipment slot.
+   *
+   * @param slot The equipment slot to check.
+   * @return The ID of the equipped item, or null if no item is equipped in that slot.
+   */
+  public String getEquippedItem(EquipmentSlot slot) {
+    return equippedItems.get(slot);
+  }
+
+  /**
+   * Equips an item in the specified equipment slot.
+   *
+   * @param slot The equipment slot to equip the item in.
+   * @param itemId The ID of the item to equip.
+   * @return The ID of the previously equipped item in that slot, or null if there was none.
+   */
+  public String equipItem(EquipmentSlot slot, String itemId) {
+    return equippedItems.put(slot, itemId);
+  }
+
+  /**
+   * Unequips an item from the specified equipment slot.
+   *
+   * @param slot The equipment slot to unequip the item from.
+   * @return The ID of the item that was unequipped, or null if the slot was empty.
+   */
+  public String unequipItem(EquipmentSlot slot) {
+    return equippedItems.remove(slot);
   }
 }

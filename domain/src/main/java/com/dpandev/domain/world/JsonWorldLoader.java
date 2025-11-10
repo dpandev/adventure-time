@@ -49,7 +49,7 @@ public final class JsonWorldLoader implements WorldLoader {
 
     JsonNode root = read(pathToLoad);
 
-    // Required top-level fields (as per your model)
+    // Required top-level fields
     String version = reqText(root, "version");
     String startRoomId = reqText(root, "startRoomId");
 
@@ -61,7 +61,33 @@ public final class JsonWorldLoader implements WorldLoader {
         String id = reqText(n, "id");
         String name = reqText(n, "name");
         String description = optText(n, "description", "");
-        itemsById.put(id, new Item(id, name, description));
+        Item.ItemType type =
+            parseEnum(
+                n,
+                new String[] {"type", "itemType"},
+                Item.ItemType.MISCELLANEOUS,
+                Item.ItemType.class);
+        Item.ArmorType armorType =
+            parseEnum(n, new String[] {"armorType", "subtype"}, null, Item.ArmorType.class);
+        Item.ConsumableType consumableType =
+            parseEnum(
+                n, new String[] {"consumableType", "subtype"}, null, Item.ConsumableType.class);
+        int attackBonus = n.path("attackBonus").asInt(0);
+        int defenseBonus = n.path("defenseBonus").asInt(0);
+        int healthRestore = n.path("healthRestore").asInt(0);
+        itemsById.put(
+            id,
+            Item.builder()
+                .id(id)
+                .name(name)
+                .description(description)
+                .type(type)
+                .consumableType(consumableType)
+                .armorType(armorType)
+                .attackBonus(attackBonus)
+                .defenseBonus(defenseBonus)
+                .healthRestore(healthRestore)
+                .build());
       }
     }
 

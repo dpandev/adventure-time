@@ -68,7 +68,11 @@ public class SimpleCommandParser implements CommandParser {
     } else if (verb == Verb.INSPECT
         || verb == Verb.PICKUP
         || verb == Verb.DROP
-        || verb == Verb.USE) {
+        || verb == Verb.USE
+        || verb == Verb.EQUIP
+        || verb == Verb.UNEQUIP
+        || verb == Verb.HEAL) {
+      // multi-word targets allowed ("pickup steel sword", "equip iron helmet")
       if (tokens.size() >= 2) {
         target = String.join(" ", tokens.subList(1, tokens.size()));
         args = List.copyOf(tokens.subList(1, tokens.size()));
@@ -124,6 +128,11 @@ public class SimpleCommandParser implements CommandParser {
     verbMap.put("activate", Verb.USE);
     verbMap.put("inventory", Verb.INVENTORY);
     verbMap.put("i", Verb.INVENTORY);
+    verbMap.put("equip", Verb.EQUIP);
+    verbMap.put("unequip", Verb.UNEQUIP);
+    verbMap.put("heal", Verb.HEAL);
+    verbMap.put("drink", Verb.HEAL);
+    verbMap.put("consume", Verb.HEAL);
     verbMap.put("solve", Verb.SOLVE);
     verbMap.put("answer", Verb.SOLVE);
     verbMap.put("quit", Verb.QUIT);
