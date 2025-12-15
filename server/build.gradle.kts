@@ -11,7 +11,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-websocket")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-    implementation("org.flywaydb:flyway-core:11.16.0")
+    implementation("org.flywaydb:flyway-core:11.19.0")
 
     runtimeOnly("org.postgresql:postgresql:42.7.8")
 
