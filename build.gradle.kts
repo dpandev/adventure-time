@@ -3,7 +3,7 @@ import org.gradle.external.javadoc.StandardJavadocDocletOptions
 import java.io.File
 
 plugins {
-  id("org.springframework.boot") version "3.5.7" apply false
+  id("org.springframework.boot") version "4.0.1" apply false
   id("io.spring.dependency-management") version "1.1.7" apply false
   id("com.diffplug.spotless") version "8.0.0" apply false
 }
